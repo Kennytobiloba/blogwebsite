@@ -1,5 +1,5 @@
 import React from "react";
-import "../components/Button.css";
+import "../components/button.css";
 
 const Button = () => {
   return (
