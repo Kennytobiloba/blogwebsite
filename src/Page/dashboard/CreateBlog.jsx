@@ -118,7 +118,7 @@ const CreateBlog = () => {
   };
 
   return (
-    <div className="bg-white md:p-8">
+    <div className="bg-white p-2 md:p-8 mt-20  ">
       <h2 className="text-2xl font-semibold">Create A New Blog Post</h2>
       <form onSubmit={handleSubmit} className="space-y-5 pt-8">
         {/* Title Input */}

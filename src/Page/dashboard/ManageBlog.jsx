@@ -23,9 +23,9 @@ const ManageBlog = () => {
     try {
       console.log("Token being used:", token);
       const cleanToken = token.replace(/^"|"$/g, ""); // Clean the token
-      
+
       const response = await fetch(
-        "https://abiodun.techtrovelab.com/api/articles", 
+        "https://abiodun.techtrovelab.com/api/articles",
         {
           method: "GET",
           headers: {
@@ -55,13 +55,13 @@ const ManageBlog = () => {
 
   // Delete article by id
   const handleDelete = async (id) => {
-     const article = id.replace(/^"|"$/g, "")
-      console.log(article, "delect")
+    const articleId = id.replace(/^"|"$/g, "");
+    console.log(articleId, "delete");
     try {
       const cleanToken = token.replace(/^"|"$/g, ""); // Clean the token
 
       const response = await fetch(
-        `https://abiodun.techtrovelab.com/api/admin/articles/${article}`, // Dynamic URL with article id
+        `https://abiodun.techtrovelab.com/api/admin/articles/${articleId}`, // Dynamic URL with article id
         {
           method: "DELETE", // Use DELETE method for deletion
           headers: {
@@ -94,10 +94,10 @@ const ManageBlog = () => {
   };
 
   return (
-    <div>
-      <section className="py-1 bg-blueGray-50">
-        <div className="w-full xl:w-8/12 mb-12 xl:mb-0 px-4 mx-auto mt-24">
-          <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
+    <div className="w-full  ">
+      <section className="py-1 bg-blueGray-50 w-full ">
+        <div className="w-full mb-12 xl:mb-0 px-4 mx-auto mt-24">
+          <div className="relative flex flex-col break-words w-full mb-6 shadow-lg rounded">
             <div className="rounded-t mb-0 px-4 py-3 border-0">
               <div className="flex flex-wrap items-center">
                 <div className="relative w-full px-4 max-w-full flex-grow flex-1">
@@ -120,7 +120,7 @@ const ManageBlog = () => {
                   </div>
                 </div>
               ) : (
-                <table className="items-center bg-transparent w-full border-collapse">
+                <table className="items-center bg-transparent w-full border-collapse overflow-x-auto">
                   <thead>
                     <tr>
                       <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">

@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { CiEdit } from "react-icons/ci";
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Modal from './Modal';
+
 
 const ManageUser = () => {
+  
   const [selectUser, setSelectUser] = useState(null);
   const { user, token } = useSelector((state) => state.auth);
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);  // For loading state
-  const [error, setError] = useState(null); // For error handling
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -21,7 +28,7 @@ const ManageUser = () => {
     try {
       setLoading(true);
       setError(null);
-      const cleanToken = token.replace(/^"|"$/g, ""); // Cleaning the token
+      const cleanToken = token.replace(/^"|"$/g, "");
       const response = await fetch("https://abiodun.techtrovelab.com/api/users", {
         method: "GET",
         headers: {
@@ -46,16 +53,86 @@ const ManageUser = () => {
   };
 
   const handleDelete = async (id) => {
+    const userId = id.replace(/^"|"$/g, "");
     try {
-      // Simulate deletion and update UI
-      setUsers(users.filter(user => user.id !== id));
-      alert(`User with ID ${id} has been deleted.`);
+      setLoading(true);
+      setError(null);
+      const cleanToken = token.replace(/^"|"$/g, "");
+      const response = await fetch(`https://abiodun.techtrovelab.com/api/users/${userId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cleanToken}`,
+        },
+      });
+
+      if (response.status === 401) {
+        setError("Unauthorized. Please log in again.");
+        return;
+      }
+
+      if (response.ok) {
+        toast.success("User deleted successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        setUsers((prevUsers) => prevUsers.filter(user => user.uuid !== userId));
+      } else {
+        const data = await response.json();
+        setError(data.message || "Failed to delete user. Please try again.");
+      }
     } catch (error) {
-      console.error('Failed to delete user', error);
-      alert('Failed to delete user. Please try again.');
+      setError("Failed to delete user. Please try again.");
+      console.error("Error deleting user:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  const handleRoleUpdate = async (id, status) => {
+
+    try {
+        const cleanToken = token.replace(/^"|"$/g, '');
+        const response = await fetch(
+            `https://abiodun.techtrovelab.com/api/admin/user-status/${id}?status=locked/${status}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${cleanToken}`,
+                },
+                body: JSON.stringify({ status }),
+            }
+        );
+
+        if (response.ok) {
+            setUsers((prevUsers) =>
+                prevUsers.map((user) =>
+                    user.id === id ? { ...user, status } : user
+                )
+            );
+            getUser()
+            toast.success('Status updated successfully!');
+        } else {
+            const errorData = await response.json();
+            toast.error(errorData.message || 'Failed to update status.');
+        }
+    } catch (error) {
+        console.error("Error updating status:", error);
+        toast.error('Failed to update status.');
+    }
+};
+
+   
+  const openModal = (userinfo) => {
+    setSelectUser(userinfo);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectUser(null);
+    setIsModalOpen(false);
+  };
   return (
     <>
       {loading ? (
@@ -66,35 +143,33 @@ const ManageUser = () => {
         <div>{error}</div>
       ) : (
         <section className="py-1 bg-blueGray-50">
-          <div className="w-full xl:w-8/12 mb-12 xl:mb-0 px-4 mx-auto mt-24">
-            <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
+          <div className="w-full mb-12 xl:mb-0 px-4 mx-auto mt-24">
+            <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6  rounded">
               <div className="rounded-t mb-0 px-4 py-3 border-0">
                 <div className="flex flex-wrap items-center">
                   <div className="relative w-full px-4 max-w-full flex-grow flex-1">
                     <h3 className="font-semibold text-base text-blueGray-700">All Users</h3>
                   </div>
-                  <div className="relative w-full px-4 max-w-full flex-grow flex-1 text-right">
-                    <button className="bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button"></button>
-                  </div>
                 </div>
               </div>
-
               <div className="block w-full overflow-x-auto">
-                <table className="items-center bg-transparent w-full border-collapse ">
+                <table className="items-center bg-transparent w-full border-collapse">
                   <thead>
                     <tr>
-                      <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">No.</th>
-                      <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">Email</th>
-                      <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">Role</th>
-                      <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">Edit or Manage</th>
-                      <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">Delete</th>
+                      <th>No.</th>
+                      <th>First Name</th>
+                      <th>Email</th>
+                      <th>Status</th>
+                      <th>Created At</th>
+                      <th>Updated At</th>
+                      <th>Edit or Manage</th>
+                      <th>Delete</th>
                     </tr>
                   </thead>
-
                   <tbody>
                     {users?.length === 0 ? (
                       <tr>
-                        <td colSpan="5" className="text-center py-3">No data available</td>
+                        <td colSpan="8" className="text-center py-3">No data available</td>
                       </tr>
                     ) : (
                       users?.map((user, index) => (
@@ -106,16 +181,28 @@ const ManageUser = () => {
                             {user.first_name}
                           </td>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                            {user?.is_admin ? "admin" : "user"}
-                          </td>
-                          <td className="border-t-0 px-6 flex gap-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                            <button className="flex gap-1">
-                              <CiEdit className="size-4" />
-                              <h6>Edit</h6>
-                            </button>
+                            {user.email}
                           </td>
                           <td
-                            onClick={() => handleDelete(user.id)}
+                          onClick={() =>openModal(user)}
+                           className="border-t-0 flex gap-1 cursor-pointer px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                            {user.status || "Inactive"}
+                            <CiEdit />
+                          </td>
+                          <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                            {new Date(user.created_at).toLocaleDateString()}
+                          </td>
+                          <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                            {new Date(user.updated_at).toLocaleDateString()}
+                          </td>
+                          <td className="border-t-0 px-6 flex gap-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                            <Link to={`/dashboard/userupdate/${user?.uuid}`} className="flex gap-1">
+                              <CiEdit className="size-4" />
+                              <h6>Edit</h6>
+                            </Link>
+                          </td>
+                          <td
+                            onClick={() => handleDelete(user.uuid)}
                             className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
                           >
                             <button className="bg-red-600 text-white px-2 py-1">Delete</button>
@@ -128,8 +215,15 @@ const ManageUser = () => {
               </div>
             </div>
           </div>
+          {isModalOpen && (
+          <Modal user={selectUser} onClose={closeModal} onRoleUpdate={handleRoleUpdate} valueone={"active"} valuetwo={"locked"}/>
+          )}
         </section>
       )}
+
+      
+      
+      <ToastContainer position="top-right" autoClose={3000}  />
     </>
   );
 };

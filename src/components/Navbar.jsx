@@ -4,16 +4,15 @@ import Logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../redux/authSlice";
-
-
+import { FaUserCircle } from "react-icons/fa"; // React Icon for profile
 
 const Navbar = () => {
   const { user, token } = useSelector((state) => state.auth);
   const [menuOpen, setMenuOpen] = useState(false);
 
-   const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-   const handleLogout = () => {
+  const handleLogout = () => {
     dispatch(logOut());
   };
 
@@ -28,10 +27,10 @@ const Navbar = () => {
   return (
     <div className="bg-transparent text-white font-Titillium w-full z-50 sticky top-0">
       <nav className="bg-black border-gray-200 py-2.5 dark:bg-gray-900 h-20">
-        <div className="flex items-center justify-between max-w-screen-xl px-4 mx-auto h-full">
+        <div className="flex items-center justify-between max-w-screen-xl px-8 mx-auto h-full">
           {/* Logo Section */}
-          <div className="w-[160px] h-[35px]">
-            <img src={Logo} alt="Logo" className="object-cover w-full h-full" />
+          <div className="w-[20%] h-[35px]">
+            <img src={Logo} alt="Logo" className="object-contain w-full h-full" />
           </div>
 
           {/* Mobile Toggle and Button */}
@@ -39,6 +38,7 @@ const Navbar = () => {
             <div className="hidden lg:block">
               <Button />
             </div>
+
             {/* Hamburger Menu Button */}
             <button
               type="button"
@@ -77,74 +77,44 @@ const Navbar = () => {
 
           {/* Mobile Menu */}
           <div
-            className={`absolute bg-black z-50 top-20 inset-x-0 w-full lg:flex lg:w-auto lg:static lg:order-1 ${
-              menuOpen ? "block" : "hidden"
-            }`}
+            className={`absolute bg-black z-50 top-20 inset-x-0 w-full lg:flex lg:w-auto lg:static lg:order-1 ${menuOpen ? "block" : "hidden"}`}
             id="mobile-menu-2"
           >
-            <ul
-              className="flex flex-col items-center space-y-4 lg:space-y-0 justify-center text-center mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0"
-              onClick={closeMenu}
-            >
+            <ul className="flex flex-col items-center space-y-4 lg:space-y-0 justify-center text-center mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0" onClick={closeMenu}>
               <li>
-                <Link
-                  to="/"
-                  className="block py-2 text-white lg:bg-transparent lg:p-0"
-                >
-                  Home
-                </Link>
+                <Link to="/" className="block py-2 text-white lg:bg-transparent lg:p-0">Home</Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="block py-2 text-white lg:bg-transparent lg:p-0"
-                >
-                  About
-                </a>
+                <a href="#" className="block py-2 text-white lg:bg-transparent lg:p-0">About</a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="block py-2 text-white lg:bg-transparent lg:p-0"
-                >
-                  Team
-                </a>
+                <a href="#" className="block py-2 text-white lg:bg-transparent lg:p-0">Team</a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="block py-2 text-white lg:bg-transparent lg:p-0"
-                >
-                  Contact
-                </a>
+                <a href="#" className="block py-2 text-white lg:bg-transparent lg:p-0">Contact</a>
               </li>
+
+              {/* Conditional rendering based on user */}
               {user ? (
                 <>
                   <li>
-                    <Link
-                      to="/dashboard"
-                      className="block py-2 text-white lg:bg-transparent lg:p-0"
-                    >
-                      Dashboard
+                    <Link to="/dashboard" className="block py-2 text-white lg:bg-transparent lg:p-0">
+                      <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Dashboard
+                      </button>
                     </Link>
                   </li>
+                  <Link to="/profile" className="flex items-center space-x-2">
+                    <FaUserCircle size={20} className="text-white" />
+                    <span className="text-white">{user.data.first_name}</span>
+                  </Link>
                   <li>
-                    <Link
-                      onClick={handleLogout}
-                      className="block py-2 text-white lg:bg-transparent lg:p-0"
-                    >
-                      Logout
-                    </Link>
+                    <Link onClick={handleLogout} className="block py-2 text-white lg:bg-transparent lg:p-0">Logout</Link>
                   </li>
                 </>
               ) : (
                 <li>
-                  <Link
-                    to="/login"
-                    className="block py-2 text-white lg:bg-transparent lg:p-0"
-                  >
-                    Login
-                  </Link>
+                  <Link to="/login" className="block py-2 text-white lg:bg-transparent lg:p-0">Login</Link>
                 </li>
               )}
             </ul>

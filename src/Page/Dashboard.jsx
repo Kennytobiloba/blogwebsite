@@ -11,8 +11,13 @@ import {
   BsSearch,
 } from "react-icons/bs";
 import { Link, Outlet } from "react-router-dom";
+import { logOut } from "../redux/authSlice";
+import { useDispatch } from "react-redux";
+
 
 const Dashboard = () => {
+   const dispatch = useDispatch()
+   
   const [sidebarVisible, setSidebarVisible] = useState(false); // To toggle sidebar visibility
   const [dropdownVisible, setDropdownVisible] = useState(false); // To toggle dropdown menu
 
@@ -26,24 +31,33 @@ const Dashboard = () => {
     setDropdownVisible(!dropdownVisible);
   };
 
+   const closeToggle = () => {
+    setDropdownVisible(false);
+    setSidebarVisible(false);
+   }
+//  log out fuction
+ const logOutUser = () => {
+   dispatch(logOut())
+   window.location.href = "/";
+ }
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex min-h-screen w-full overflow-x-hidden">
       {/* Sidebar Toggle Icon (Always Visible) */}
       <span
-        className="absolute text-white text-4xl top-5 left-4 cursor-pointer lg:hidden z-50"
+        className="fixed text-white text-4xl top-5 left-4 cursor-pointer lg:hidden z-50"
         onClick={toggleSidebar}
       >
-        <BsFilterLeft className="px-2 bg-gray-900 rounded-md" />
+        <BsFilterLeft className="px-2 bg-gray-900 text-white rounded-md" />
       </span>
 
       {/* Sidebar */}
       <div
-        className={`bg-gray-900 min-w-fit lg:w-[22%] ${
+        className={`bg-gray-900 min-w-fit lg:w-[22%] text-white font ${
           sidebarVisible ? "block" : "hidden"
         } lg:block`}
       >
         <div
-          className={`sidebar fixed top-0 bottom-0 lg:relative p-2 overflow-y-auto text-center bg-gray-900`}
+          className={`sidebar fixed top-0 bottom-0 lg:relative p-2 z-40 overflow-y-auto text-center bg-gray-900`}
         >
           <div className="text-gray-100 text-xl">
             <div className="p-2.5 mt-1 flex items-center">
@@ -70,24 +84,32 @@ const Dashboard = () => {
           </div>
 
           {/* Menu items */}
-          <div className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+          <div 
+          onClick={closeToggle}
+          className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <BsHouseDoorFill />
             <Link to="/dashboard" className="text-[15px] ml-4 text-gray-200 font-bold">Home</Link>
           </div>
 
-          <div className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+          <div
+           onClick={closeToggle}
+           className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <BsBookmarkFill />
             <Link to="/dashboard/createpost" className="text-[15px] ml-4 text-gray-200 font-bold">
               Create a Article
             </Link>
           </div>
-          <div className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+          <div 
+           onClick={closeToggle}
+          className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <BsBookmarkFill />
             <Link to="/dashboard/manageblog" className="text-[15px] ml-4 text-gray-200 font-bold">
               Manage Article
             </Link>
           </div>
-          <div className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+          <div
+           onClick={closeToggle}
+           className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <BsBookmarkFill />
             <Link to="/dashboard/manageuser"  className="text-[15px] ml-4 text-gray-200 font-bold">
               Manage User
@@ -99,22 +121,11 @@ const Dashboard = () => {
           {/* Dropdown menu */}
           
 
-          {/* Submenu */}
-          {dropdownVisible && (
-            <div className="text-left text-sm mt-2 w-4/5 mx-auto text-gray-200 font-bold">
-              <h1 className="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">
-                Social
-              </h1>
-              <h1 className="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">
-                Personal
-              </h1>
-              <h1 className="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">
-                Friends
-              </h1>
-            </div>
-          )}
+       
 
-          <div className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+          <div 
+          onClick={logOutUser}
+          className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <BsBoxArrowInRight />
             <span className="text-[15px] ml-4 text-gray-200 font-bold">
               Logout
@@ -124,7 +135,20 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1  p-4">
+      <div className="flex-1   max-w-[100%]">
+      <div className="flex-1 flex flex-col max-w-[100%]">
+        {/* Top Navigation */}
+        <div className="bg-gray-800 text-white p-4 flex justify-end lg:justify-between items-center">
+          <h1 className="text-lg font-bold hidden lg:block ">Dashboard</h1>
+          <Link
+            to="/"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Back to Main Page
+          </Link>
+        </div>
+        </div>
+        
         <Outlet />
       </div>
     </div>

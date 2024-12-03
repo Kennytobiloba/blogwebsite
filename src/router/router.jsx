@@ -12,6 +12,8 @@ import CreateBlog from "../Page/dashboard/CreateBlog";
 import ManageBlog from "../Page/dashboard/ManageBlog";
 import ManageUser from "../Page/dashboard/ManageUser";
 import EditBlog from "../Page/dashboard/EditBlog";
+import Profile from "../Page/Profile";
+import AdminUserUpdate from "../Page/dashboard/AdminUserUpdate";
 
 
 
@@ -39,6 +41,10 @@ import EditBlog from "../Page/dashboard/EditBlog";
         element:<Register/>
       },
       {
+        path:"/profile",
+        element:<Profile/>
+      },
+      {
         path:"/dashboard",
         element:<Dashboard/>,
         children:[
@@ -62,9 +68,14 @@ import EditBlog from "../Page/dashboard/EditBlog";
             path: "/dashboard/Update/:id",
             element:<EditBlog/>
           },
+          {
+            path:   "/dashboard/userupdate/:id",
+            element:<AdminUserUpdate/>
+          },
 
         ]
       },
+    
       
       
 

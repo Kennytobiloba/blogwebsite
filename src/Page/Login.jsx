@@ -22,18 +22,18 @@ const Login = () => {
         body: JSON.stringify(formData),
       });
 
-      const { data, token, message } = await res.json();
-      // console.log("login", data);
+      const data = await res.json();
+      console.log("login", data);
 
       if (res.ok) {
         // Successful login
         toast.success('Login Successfully');
         localStorage.setItem("user", JSON.stringify(data));
-        localStorage.setItem("token", JSON.stringify(token));
-        window.location.href = "/";
+        localStorage.setItem("token", JSON.stringify(data.token));
+        window.location.href = "/dashboard";
       } else {
         // Error handling: Set the error message from the response
-        setErrorMessage(message || "Failed to login. Please try again.");
+        setErrorMessage(data.error.message|| "Failed to login. Please try again.");
       }
     } catch (error) {
       setErrorMessage("An error occurred. wrong password or email.");
