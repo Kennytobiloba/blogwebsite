@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import FilterForm from "../components/Filter";
 import BlogLists from "../components/BlogLists";
+import Footer from "../components/Footer";
+
 
 const AllBlogPage = () => {
   const [articles, setArticle] = useState([]);
@@ -20,16 +22,24 @@ const AllBlogPage = () => {
   // Fetch articles with filters applied
   const fetchArticles = async () => {
     const { from, to, status, page, perPage, sort } = filters;
-    let url = `https://abiodun.techtrovelab.com/api/articles?page=${page}&perPage=${perPage}`;
+    // let url = `https://abiodun.techtrovelab.com/api/articles?page=${page}&perPage=${perPage}`;
 
-    // Add filters to URL if they exist
-    if (status) url += `&status=${status}`;
-    if (from) url += `&from=${from}`;
-    if (to) url += `&to=${to}`;
-    if (sort) url += `&sort=${sort}`;
+    // // Add filters to URL if they exist
+    // if (status) url += `&status=${status}`;
+    // if (from) url += `&from=${from}`;
+    // if (to) url += `&to=${to}`;
+    // if (sort) url += `&sort=${sort}`;
 
     try {
-      const response = await fetch(url);
+      const response = await fetch("https://abiodun.techtrovelab.com/api/articles?",{
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: "GET",
+        
+      }
+        
+      );
       const data = await response.json();
       if (data && Array.isArray(data.data)) {
         setArticle(data.data);
@@ -68,15 +78,17 @@ const AllBlogPage = () => {
         <Navbar />
       </div>
 
-      <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto py-0">
-        {/* Filter Section */}
-        <FilterForm filters={filters} handleFilterChange={handleFilterChange} />
-
-        {/* Blog Content Section */}
-        <div className="w-full lg:col-span-2">
-          <BlogLists article={articles} pagination={pagination} loading={loading} />
+      <div className="w-full grid  mt-8  gap-6 max-w-7xl mx-auto py-0">
+        <h1 className="text-center lg:text-3xl text-2xl font-bold font-poppins">All Articles</h1>
+        <div className="w-full">
+        <BlogLists article={articles} pagination={pagination} loading={loading} />
         </div>
+
+    
+         
+      
       </div>
+      <Footer/>
     </div>
   );
 };

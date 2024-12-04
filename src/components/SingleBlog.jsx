@@ -6,15 +6,15 @@ import Comment from './Comment';
 import { useSelector } from 'react-redux';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Footer from './Footer';
+
 
 
 const editorJSParser = EditorJSHTML();
 
 const SingleBlog = () => {
   const { user, token } = useSelector((state) => state.auth);
-  if (!user) {
-    window.location.href = "/login";
-  }
+ 
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -231,6 +231,7 @@ const getUserComment = async () => {
         </div>
         <ToastContainer position="top-right" autoClose={3000}  />
       </div>
+      <Footer/>
     </>
   );
 };
