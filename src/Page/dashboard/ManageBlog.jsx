@@ -2,12 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CiEdit } from "react-icons/ci";
 import { useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Modal from "./Modal";
+import CommentModal from "./CommentModal";
 
 const ManageBlog = () => {
+  const [commentModal, setCommentModal] = useState(null)
+  const [iscommentOpen, setCommentOpen] = useState(false)
+  const [selectUser, setSelectUser] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [article, setArticle] = useState([]); // State to hold articles
   const [loading, setLoading] = useState(true); // State to manage loading
   const { user, token } = useSelector((state) => state.auth); // Get user and token from Redux store
   const [users, setUsers] = useState([]); // State to hold users (if needed)
+  console.log(article, "userdelect");
 
   // Redirect to login if user is not logged in
   if (!user) {
@@ -53,49 +62,123 @@ const ManageBlog = () => {
     }
   };
 
-  // Delete article by id
   const handleDelete = async (id) => {
-    const articleId = id.replace(/^"|"$/g, "");
-    console.log(articleId, "delete");
-    try {
-      const cleanToken = token.replace(/^"|"$/g, ""); // Clean the token
+    console.log("Article ID to delete:", id); // Debugging to ensure it's the correct value
 
+    try {
+      const cleanToken = token.replace(/^"|"$/g, "");
       const response = await fetch(
-        `https://abiodun.techtrovelab.com/api/admin/articles/${articleId}`, // Dynamic URL with article id
+        `https://abiodun.techtrovelab.com/api/admin/articles/${id}`,
         {
-          method: "DELETE", // Use DELETE method for deletion
+          method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${cleanToken}`, // Pass the cleaned token
+            Authorization: `Bearer ${cleanToken}`,
           },
         }
       );
 
       const data = await response.json();
-      console.log("Data after deletion:", data);
+      console.log("Delete response", data);
 
-      if (response.status === 401) {
-        alert("Unauthorized. Please log in again.");
-        return;
-      }
-
-      if (response.status === 404) {
-        alert("Article not found.");
-        return;
-      }
-
-      if (response.status === 200) {
-        alert("Article deleted successfully!");
-        setArticle(article.filter((blog) => blog.id !== id)); // Remove the deleted article from the state
+      if (response.ok) {
+        toast.success("Article deleted successfully");
+        getAllArticles();
+       
+      } else {
+        toast.error(data.message || "Something went wrong");
       }
     } catch (error) {
-      console.error("Failed to delete article", error);
+      console.error("Error deleting article:", error);
+      toast.error("An error occurred while deleting the article");
     }
   };
 
+  const handleRoleUpdate = async (id, status) => {
+    try {
+      const cleanToken = token.replace(/^"|"$/g, "");
+      const response = await fetch(
+        `https://abiodun.techtrovelab.com/api/admin/articles/${id}/status?status=/${status}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cleanToken}`,
+          },
+          body: JSON.stringify({ status }),
+        }
+      );
+
+      if (response.ok) {
+       
+        getAllArticles();
+        toast.success("Status updated successfully!");
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.message || "Failed to update status.");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status.");
+    }
+  };
+
+  const handleCommenntUupdate = async (id, status) => {
+    try {
+      const cleanToken = token.replace(/^"|"$/g, "");
+      const response = await fetch(
+        `https://abiodun.techtrovelab.com/api/admin/articles/${id}/toggle-comment`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cleanToken}`,
+          },
+          body: JSON.stringify({ status }),
+        }
+      );
+
+      if (response.ok) {
+       
+        getAllArticles();
+        toast.success("Status updated successfully!");
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.message || "Failed to update status.");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status.");
+    }
+  };
+
+  const OpenCommentModal = (userinfo) => {
+    setCommentModal(userinfo);
+    setCommentOpen(true)
+  
+   }
+   const closeComment = () => {
+    setCommentModal(null)
+    setCommentOpen(false)
+
+   }
+
+  const openModal = (article) => {
+    setSelectUser(article);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setCommentModal(null);
+    setIsModalOpen(false);
+    
+  };
+  
+  
+
   return (
-    <div className="w-full  ">
-      <section className="py-1 bg-blueGray-50 w-full ">
+    <div className="w-full">
+      <section className="py-1 bg-blueGray-50 w-full">
         <div className="w-full mb-12 xl:mb-0 px-4 mx-auto mt-24">
           <div className="relative flex flex-col break-words w-full mb-6 shadow-lg rounded">
             <div className="rounded-t mb-0 px-4 py-3 border-0">
@@ -127,11 +210,15 @@ const ManageBlog = () => {
                         No.
                       </th>
                       <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
-                        Blog Name
+                        Blog Title
                       </th>
                       <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                         Publishing Date
                       </th>
+                      <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                        Comment 
+                      </th>
+
                       <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                         Status
                       </th>
@@ -163,9 +250,24 @@ const ManageBlog = () => {
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                             {new Date(blog.created_at).toLocaleString()}
                           </td>
+                          
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                             <span
-                              className={`px-2 py-1 rounded-full text-xs ${
+                             onClick={() =>OpenCommentModal(blog)}
+                              className={`px-2 py-1 rounded-full text-xs cursor-pointer ${
+                                blog.commentable === true
+                                  ? "bg-green-500 text-white"
+                                  : "bg-yellow-500 text-black"
+                              }`}
+                            >
+                              {blog.commentable ? "true" :"false"}
+                            </span>
+                          </td>
+
+                          <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                            <span
+                             onClick={() => openModal(blog)}
+                              className={`px-2 py-1 rounded-full text-xs cursor-pointer ${
                                 blog.status === "Published"
                                   ? "bg-green-500 text-white"
                                   : "bg-yellow-500 text-black"
@@ -183,7 +285,7 @@ const ManageBlog = () => {
                             </Link>
                           </td>
                           <td
-                            onClick={() => handleDelete(blog.data.uuid)}
+                            onClick={() => handleDelete(blog.uuid)}
                             className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
                           >
                             <button className="bg-red-600 text-white px-2 py-1">
@@ -199,7 +301,24 @@ const ManageBlog = () => {
             </div>
           </div>
         </div>
+        {isModalOpen && (
+          <Modal
+           title={"Status"}
+            user={selectUser}
+            onClose={closeModal}
+            onRoleUpdate={handleRoleUpdate}
+            valueone={"draft"}
+            valuetwo={"publish"}
+            
+          />
+        )}
+        {
+           iscommentOpen && (
+            <CommentModal user={commentModal} title={"Comment"} valueone={"false"} valuetwo={'true'} onClose={closeComment} onRoleUpdate={handleCommenntUupdate} />
+          )
+        }
       </section>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

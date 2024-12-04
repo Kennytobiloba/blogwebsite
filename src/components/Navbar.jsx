@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Button from "./Button";
 import Logo from "../assets/logo.png";
-import { Link } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../redux/authSlice";
 import { FaUserCircle } from "react-icons/fa"; // React Icon for profile
@@ -85,7 +85,7 @@ const Navbar = () => {
                 <Link to="/" className="block py-2 text-white lg:bg-transparent lg:p-0">Home</Link>
               </li>
               <li>
-                <a href="#" className="block py-2 text-white lg:bg-transparent lg:p-0">About</a>
+                <Link to="/allblogs" className="block py-2 text-white lg:bg-transparent lg:p-0">Blog</Link>
               </li>
               <li>
                 <a href="#" className="block py-2 text-white lg:bg-transparent lg:p-0">Team</a>

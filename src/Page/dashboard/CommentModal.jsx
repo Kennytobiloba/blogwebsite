@@ -1,26 +1,21 @@
 import React, { useState } from 'react';
 
-const Modal = ({ user, onClose, onRoleUpdate, valueone, valuetwo, title }) => {
-  const [role, setRole] = useState(user?.status || 'inactive')
-  console.log("role", )
-  console.log(valueone, "valueone")
-  console.log(valuetwo, "valueone")
+const CommentModal = ({ user, onClose, onRoleUpdate, valueone, valuetwo, title }) => {
+  const [comment, setComment] = useState(user?.commentable ? "true" : "false")
+  console.log("comment", user )
+//   console.log(valueone, "valueone")
+//   console.log(valuetwo, "valueone")
       
   const userId = user?.uuid?.replace(/^"|"$/g, "") || "";
 
 
   const handleRoleUpdate = async () => {
-     onRoleUpdate(userId, role)
+     onRoleUpdate(userId, comment)
   
     onClose();
      console.log("user update", userId, role)
   };
-//   const handleStatusUpdate = async () => {
-//     onRoleUpdate(userId, role)
- 
-//    onClose();
-//     console.log("user update", userId, role)
-//  };
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -41,11 +36,11 @@ const Modal = ({ user, onClose, onRoleUpdate, valueone, valuetwo, title }) => {
           <label className="block text-sm font-medium text-gray-700">{title}</label>
           <select
             className="mt-1 w-full bg-white border border-gray-300 rounded-md py-2 px-4 text-gray-700 shadow-sm focus:outline-none focus:ring focus:ring-indigo-300"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
           >
             <option value={valueone}>{valueone}</option>
-            <option value={valuetwo}>{valuetwo}</option>
+            <option value={valuetwo === "true" ? "toggle-comment" : ""}>{valuetwo}</option>
           </select>
         </div>
 
@@ -69,4 +64,4 @@ const Modal = ({ user, onClose, onRoleUpdate, valueone, valuetwo, title }) => {
   );
 };
 
-export default Modal;
+export default CommentModal;

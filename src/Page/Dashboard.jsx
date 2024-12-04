@@ -41,7 +41,7 @@ const Dashboard = () => {
    window.location.href = "/";
  }
   return (
-    <div className="flex min-h-screen w-full overflow-x-hidden">
+    <div className="flex min-h-screen w-full overflow-x-">
       {/* Sidebar Toggle Icon (Always Visible) */}
       <span
         className="fixed text-white text-4xl top-5 left-4 cursor-pointer lg:hidden z-50"

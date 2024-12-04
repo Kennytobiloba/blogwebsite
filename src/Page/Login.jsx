@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { setUser } from "../redux/authSlice";
 import { Link } from "react-router-dom";
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -8,10 +6,12 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
+  const [loading, setLoading] = useState(false); // State for loading
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = { email, password };
+    setLoading(true); // Set loading to true when API request starts
 
     try {
       const res = await fetch("https://abiodun.techtrovelab.com/api/auth/login", {
@@ -33,10 +33,12 @@ const Login = () => {
         window.location.href = "/dashboard";
       } else {
         // Error handling: Set the error message from the response
-        setErrorMessage(data.error.message|| "Failed to login. Please try again.");
+        setErrorMessage(data.error.message || "Failed to login. Please try again.");
       }
     } catch (error) {
-      setErrorMessage("An error occurred. wrong password or email.");
+      setErrorMessage("An error occurred. Wrong password or email.");
+    } finally {
+      setLoading(false); // Set loading to false when the API request finishes
     }
   };
 
@@ -97,8 +99,29 @@ const Login = () => {
           <button
             type="submit"
             className="w-full py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={loading} // Disable the button when loading
           >
-            Login
+            {loading ? (
+              <div className="flex justify-center items-center">
+                {/* Loader spinner */}
+                <svg
+                  className="animate-spin h-5 w-5 mr-3 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path d="M4 12a8 8 0 1 1 8 8" fill="none" stroke="currentColor" strokeWidth="4" />
+                </svg>
+                Loading...
+              </div>
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
 

@@ -176,15 +176,19 @@ const EditBlog = () => {
                 accept="image/*"
                 multiple
               />
-              <label className="font-semibold mt-4 block">Status:</label>
-              <input
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full inline-block bg-gray-100 focus:outline-none px-5 py-3"
-                type="text"
-                placeholder="RoofTops"
-                required
-              />
+             
+              <div className="space-y-4">
+                <label className="font-semibold">Status:</label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)} // Handle dropdown change
+                  className="w-full inline-block bg-gray-100 focus:outline-none px-5 py-3"
+                  required
+                >
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>

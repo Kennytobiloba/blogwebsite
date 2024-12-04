@@ -14,6 +14,8 @@ import ManageUser from "../Page/dashboard/ManageUser";
 import EditBlog from "../Page/dashboard/EditBlog";
 import Profile from "../Page/Profile";
 import AdminUserUpdate from "../Page/dashboard/AdminUserUpdate";
+import SingleBlog from "../components/SingleBlog";
+import AllBlogPage from "../Page/AllBlogPage"
 
 
 
@@ -43,6 +45,14 @@ import AdminUserUpdate from "../Page/dashboard/AdminUserUpdate";
       {
         path:"/profile",
         element:<Profile/>
+      },
+      {
+        path:"/allblogs",
+        element:<AllBlogPage/>
+      },
+      {
+        path:"/singlePage/:id",
+        element:<SingleBlog/>
       },
       {
         path:"/dashboard",

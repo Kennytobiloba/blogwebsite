@@ -15,6 +15,7 @@ const ManageUser = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+ 
 
   useEffect(() => {
     if (user) {
@@ -123,6 +124,7 @@ const ManageUser = () => {
     }
 };
 
+ 
    
   const openModal = (userinfo) => {
     setSelectUser(userinfo);
@@ -132,6 +134,7 @@ const ManageUser = () => {
   const closeModal = () => {
     setSelectUser(null);
     setIsModalOpen(false);
+    
   };
   return (
     <>
@@ -162,7 +165,8 @@ const ManageUser = () => {
                       <th>Status</th>
                       <th>Created At</th>
                       <th>Updated At</th>
-                      <th>Edit or Manage</th>
+                      <th>Login At</th>
+                      <th>Edit </th>
                       <th>Delete</th>
                     </tr>
                   </thead>
@@ -195,6 +199,9 @@ const ManageUser = () => {
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                             {new Date(user.updated_at).toLocaleDateString()}
                           </td>
+                          <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                            {new Date(user.login_at).toLocaleDateString()}
+                          </td>
                           <td className="border-t-0 px-6 flex gap-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                             <Link to={`/dashboard/userupdate/${user?.uuid}`} className="flex gap-1">
                               <CiEdit className="size-4" />
@@ -216,7 +223,7 @@ const ManageUser = () => {
             </div>
           </div>
           {isModalOpen && (
-          <Modal user={selectUser} onClose={closeModal} onRoleUpdate={handleRoleUpdate} valueone={"active"} valuetwo={"locked"}/>
+          <Modal user={selectUser} onClose={closeModal} onRoleUpdate={handleRoleUpdate} valueone={"active"} valuetwo={"locked"} title={"Status"}/>
           )}
         </section>
       )}

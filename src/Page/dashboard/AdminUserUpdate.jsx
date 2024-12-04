@@ -107,6 +107,8 @@ const AdminUserUpdate = () => {
           position: "top-right",
           autoClose: 3000,
         });
+        window.location.href = " /dashboard/manageuser";
+       
       } else {
         setError(data.message || "Failed to update profile.");
         toast.error(data.message || "Failed to update profile.", {
@@ -175,7 +177,7 @@ const AdminUserUpdate = () => {
               id="email"
               name="email"
               value={formData.email}
-              onChange={handleChange}
+              readOnly
               className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
               required
             />
@@ -211,25 +213,14 @@ const AdminUserUpdate = () => {
               className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
             >
               <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+           
             </select>
           </div>
 
           {/* Profile Image */}
-          <div className="flex flex-col w-full sm:w-full">
-            <label htmlFor="profile_img" className="text-sm font-medium text-gray-700 mb-2">
-              Profile Image
-            </label>
-            <input
-              type="file"
-              id="profile_img"
-              name="profile_img"
-              onChange={handleFileChange}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
-            />
-          </div>
+        
         </div>
 
         {/* Submit Button */}

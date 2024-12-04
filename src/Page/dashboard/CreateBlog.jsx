@@ -3,11 +3,11 @@ import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import { useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CreateBlog = () => {
   const { user, token } = useSelector((state) => state.auth);
-
-  // Redirect if user is not logged in
   if (!user) {
     window.location.href = "/login";
   }
@@ -17,7 +17,7 @@ const CreateBlog = () => {
   const [image_file, setImageFiles] = useState([]); // For storing multiple image files
   const [status, setStatus] = useState("draft");
   const [content, setContent] = useState("");
-  const [uuid, setUuid] = useState(user.uuid);
+  const [uuid, setUuid] = useState(user.data.uuid);
   const [is_commentable, setIsCommentable] = useState(0);
 
   useEffect(() => {
@@ -95,11 +95,18 @@ const CreateBlog = () => {
         );
 
         const data = await response.json();
-        console.log("Data fetched:", data);
+        // console.log("Data fetched:", data);
 
         if (response.status === 401) {
           alert("Unauthorized. Please log in again.");
           return;
+        }
+        if(response.ok){
+          toast.success("User created successfully!", {
+            position: "top-right",
+            autoClose: 3000,
+          });
+          window.location.href = "/dashboard/manageblog";
         }
 
         if (response.status === 422) {
@@ -116,6 +123,8 @@ const CreateBlog = () => {
 
     sendData();
   };
+
+   
 
   return (
     <div className="bg-white p-2 md:p-8 mt-20  ">
@@ -161,25 +170,15 @@ const CreateBlog = () => {
               {/* Status */}
               <div className="space-y-4">
                 <label className="font-semibold">Status:</label>
-                <input
+                <select
                   value={status}
-                  onChange={(e) => setStatus(e.target.value)} // Ensure status can be edited
+                  onChange={(e) => setStatus(e.target.value)} // Handle dropdown change
                   className="w-full inline-block bg-gray-100 focus:outline-none px-5 py-3"
-                  type="text"
-                  placeholder="e.g. Draft"
                   required
-                />
-              </div>
-
-              {/* UUID */}
-              <div className="space-y-4">
-                <label className="font-semibold">Username:</label>
-                <input
-                  value={uuid}
-                  className="w-full inline-block bg-gray-100 focus:outline-none px-5 py-3"
-                  type="text"
-                  disabled
-                />
+                >
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                </select>
               </div>
             </div>
           </div>
@@ -193,6 +192,9 @@ const CreateBlog = () => {
           Add New Blog
         </button>
       </form>
+  
+      <ToastContainer position="top-right" autoClose={3000}  />
+
     </div>
   );
 };
