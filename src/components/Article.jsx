@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Blogs from './Blogs';
 
+import { Link } from 'react-router-dom';
+
+
 const Article = () => {
   const [article, setArticle] = useState([]);
   console.log("find", article)
@@ -89,9 +92,9 @@ const Article = () => {
 
         {/* Browse More Articles Button */}
         <div className="mt-10 text-center">
-          <button className="px-8 py-3 bg-blue-600 text-white font-semibold text-lg rounded-full hover:bg-blue-700 transition duration-300 transform hover:scale-105">
+          <Link to="/allblogs" className="px-8 py-3 bg-blue-600 text-white font-semibold text-lg rounded-full hover:bg-blue-700 transition duration-300 transform hover:scale-105">
             Explore More Stories
-          </button>
+          </Link>
         </div>
       </div>
     </div>
