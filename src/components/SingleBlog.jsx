@@ -20,7 +20,7 @@ const SingleBlog = () => {
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
   const [comments, setComments] = useState([]);
-  // console.log(comments, "coments")
+  // console.log(article, "article")
   
   const safeJsonParse = (content) => {
     try {
@@ -189,6 +189,7 @@ const SingleBlog = () => {
             setContent={setContent}
             getComment={sendData} 
             comments={comments}  
+            article={article}
           />
         </div>
         <ToastContainer position="top-right" autoClose={3000} />
