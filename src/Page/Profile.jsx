@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";  // Import toast and ToastContainer from React Toastify
 import "react-toastify/dist/ReactToastify.css";  // Import toast CSS
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+
 
 const Profile = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -19,6 +22,7 @@ const Profile = () => {
     email: "",
   });
 
+  const [profileImage, setProfileImage] = useState(null); // State for profile image
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -73,9 +77,9 @@ const Profile = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle file input change (if needed for profile image)
+  // Handle file input change for profile image (passport)
   const handleFileChange = (e) => {
-    setFormData({ ...formData, profile_img: e.target.files[0] });
+    setProfileImage(e.target.files[0]);
   };
 
   // Handle form submission
@@ -123,102 +127,108 @@ const Profile = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 border rounded-lg shadow-xl bg-white">
+    <>
+    <Navbar/>
+    <div className="max-w-lg mx-auto mt-10 p-6 border rounded-lg shadow-xl bg-white mb-10">
       <h2 className="text-2xl font-semibold mb-6 text-center text-blue-700">Profile Information</h2>
 
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
       <form onSubmit={handleSubmit}>
-        <div className="flex flex-wrap gap-4">
-          {/* First Name */}
-          <div className="flex flex-col w-full sm:w-full">
-            <label htmlFor="first_name" className="text-sm font-medium text-gray-700 mb-2">
-              First Name
-            </label>
-            <input
-              type="text"
-              id="first_name"
-              name="first_name"
-              value={formData.first_name}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
-              required
-            />
-          </div>
+        {/* User Information Section */}
+        <div className="space-y-6">
+          <div className="flex flex-wrap gap-4">
+            {/* First Name */}
+            <div className="flex flex-col w-full sm:w-full">
+              <label htmlFor="first_name" className="text-sm font-medium text-gray-700 mb-2">
+                First Name
+              </label>
+              <input
+                type="text"
+                id="first_name"
+                name="first_name"
+                value={formData.first_name}
+                onChange={handleChange}
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+                required
+              />
+            </div>
 
-          {/* Last Name */}
-          <div className="flex flex-col w-full sm:w-full">
-            <label htmlFor="last_name" className="text-sm font-medium text-gray-700 mb-2">
-              Last Name
-            </label>
-            <input
-              type="text"
-              id="last_name"
-              name="last_name"
-              value={formData.last_name}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
-              required
-            />
-          </div>
+            {/* Last Name */}
+            <div className="flex flex-col w-full sm:w-full">
+              <label htmlFor="last_name" className="text-sm font-medium text-gray-700 mb-2">
+                Last Name
+              </label>
+              <input
+                type="text"
+                id="last_name"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleChange}
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+                required
+              />
+            </div>
 
-          {/* Email */}
-          <div className="flex flex-col w-full sm:w-full">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700 mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
-              required
-            />
-          </div>
+            {/* Email */}
+            <div className="flex flex-col w-full sm:w-full">
+              <label htmlFor="email" className="text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+                required
+              />
+            </div>
 
-          {/* Description */}
-          <div className="flex flex-col w-full sm:w-full">
-            <label htmlFor="description" className="text-sm font-medium text-gray-700 mb-2">
-              Description
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows="4"
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
-              placeholder="Tell us about yourself..."
-              required
-            />
-          </div>
+            {/* Description */}
+            <div className="flex flex-col w-full sm:w-full">
+              <label htmlFor="description" className="text-sm font-medium text-gray-700 mb-2">
+                Description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows="4"
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+                placeholder="Tell us about yourself..."
+                required
+              />
+            </div>
 
-          {/* Gender */}
-          <div className="flex flex-col w-full sm:w-full">
-            <label htmlFor="gender" className="text-sm font-medium text-gray-700 mb-2">
-              Gender
-            </label>
-            <select
-              id="gender"
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
-            >
-              <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-             
-            </select>
+            {/* Gender */}
+            <div className="flex flex-col w-full sm:w-full">
+              <label htmlFor="gender" className="text-sm font-medium text-gray-700 mb-2">
+                Gender
+              </label>
+              <select
+                id="gender"
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+              >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
           </div>
+        </div>
 
-          {/* Profile Image */}
+        {/* Profile Image Section (Passport) */}
+        <div className="space-y-6 mt-8">
           <div className="flex flex-col w-full sm:w-full">
             <label htmlFor="profile_img" className="text-sm font-medium text-gray-700 mb-2">
-              Profile Image
+              Upload Passport / Profile Image
             </label>
             <input
               type="file"
@@ -244,6 +254,8 @@ const Profile = () => {
       {/* ToastContainer positioned top right */}
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
+    <Footer/>
+    </>
   );
 };
 

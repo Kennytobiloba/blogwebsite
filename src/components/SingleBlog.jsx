@@ -8,23 +8,20 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from './Footer';
 
-
-
 const editorJSParser = EditorJSHTML();
 
 const SingleBlog = () => {
   const { user, token } = useSelector((state) => state.auth);
- 
+  const { id } = useParams(); // Move `useParams` here to avoid potential issues
+
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
   const [comments, setComments] = useState([]);
-  // console.log("article user", article)
-
-  const { id } = useParams();
-
+  // console.log(comments, "coments")
+  
   const safeJsonParse = (content) => {
     try {
       return typeof content === 'string' ? JSON.parse(content) : content;
@@ -34,11 +31,11 @@ const SingleBlog = () => {
     }
   };
 
+  // Function to fetch article details
   const getArticle = async () => {
     try {
       setLoading(true);
       setError(null);
-
       const response = await fetch(`https://abiodun.techtrovelab.com/api/articles/${id}`, {
         method: "GET",
         headers: {
@@ -71,23 +68,43 @@ const SingleBlog = () => {
     }
   };
 
+  // Function to fetch comments
+  const getUserComment = async () => {
+    const uuid = id.replace(/^"|"$/g, "");
+    console.log("uuid comment", uuid)
+    try {
+      const response = await fetch(`https://abiodun.techtrovelab.com/api/article/${uuid}`,{
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      console.log(data, "data coment")
+
+      if (response.ok) {
+        setComments(data.data);  // Set fetched comments
+        getUserComment()
+      } else {
+        setError("Failed to load comments.");
+      }
+    } catch (error) {
+      setError("Error fetching comments.");
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  // Fetch article and comments when component is mounted or `id` changes
   useEffect(() => {
-    
     if (id) {
       getArticle();
-      // getUserComment()
-      
+      getUserComment();
     } else {
       setError("Article ID not found.");
     }
-   
   }, [id]);
 
-  let htmlContent = "";
-  if (article?.content) {
-    htmlContent = editorJSParser.parse(article.content).join('');
-  }
-
+  // Render loading, error, or article content
   if (loading) {
     return <div className="text-center text-xl">Loading...</div>;
   }
@@ -100,104 +117,46 @@ const SingleBlog = () => {
     return <div className="text-center">No article found</div>;
   }
 
-  const { title, author, rating, thumbnail } = article;
+  // If article is fetched successfully, parse content
+  let htmlContent = "";
+  if (article?.content) {
+    htmlContent = editorJSParser.parse(article.content).join('');
+  }
 
-  
+  const { title, author, rating, thumbnail } = article;
   const thumbnailUrl =
     thumbnail && thumbnail.length > 0
       ? `https://abiodun.techtrovelab.com${thumbnail[0]}`
       : "https://via.placeholder.com/600"; // Fallback image URL
 
-
-//  get comment 
-const sendData = async () => {
-   const formData = {
-    name,
-    content
-   }
-   console.log(formData, "comment")
- 
-  try {
-
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("content", content);
-    
-    console.log("Token being used:", token);
-    const cleanToken = token.replace(/^"|"$/g, ""); // Clean token
-    const uuid = id.replace(/^"|"$/g, "");
-     console.log("uuid", uuid)
-    const response = await fetch(
-      `https://abiodun.techtrovelab.com/api/article/${uuid}`,
-      {
-        method: "POST",
-        body:formData,
-        headers: {
-          Authorization: `Bearer ${cleanToken}`, // Use the cleaned token
-        },
+  const sendData = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("content", content);
+      const uuid = id.replace(/^"|"$/g, "");
+      const response = await fetch(
+        `https://abiodun.techtrovelab.com/api/article/${uuid}`, // Adjusted URL to send comment
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      if (response.ok) {
+        toast.success("Thank you for your comment!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        setName('');
+        setContent('');
+      } else {
+        const data = await response.json();
+        alert("Validation failed: " + data.error.message); // Display validation error if any
       }
-    );
-    const data = await response.json();
-    // console.log("Data fetched:", data);
-
-    if (response.status === 401) {
-      alert("Unauthorized. Please log in again.");
-      return;
+    } catch (error) {
+      console.error("Error sending data:", error);
     }
-    if(response.ok){
-      toast.success("Thank you for your comment,", {
-        position: "top-right",
-        autoClose: 3000,
-      });    
-    }
-    if (response.status === 422) {
-      alert("Validation failed: " + data.error.message); // Display validation error if any
-      return;
-    }      
-  } catch (error) {
-    console.error("Error sending data:", error);
-  }
-};
-
-const getUserComment = async () => { 
- try { 
-   console.log("Token being used:", token);
-   const cleanToken = token.replace(/^"|"$/g, ""); // Clean token
-   const uuid = id.replace(/^"|"$/g, "");
-    console.log("uuid", uuid)
-   const response = await fetch(
-     `https://abiodun.techtrovelab.com/api/article/${uuid}`,
-     {
-       method: "GET",
-       
-       headers: {
-         Authorization: `Bearer ${cleanToken}`, // Use the cleaned token
-       },
-     }
-   );
-   const data = await response.json();
-   console.log("Data comment:", data);
-   setComments(data.data.comments); 
-
-
-   if (response.status === 401) {
-     alert("Unauthorized. Please log in again.");
-     return;
-   }
-   if(response.ok){
-    sendData()
-     
-   }
-   if (response.status === 422) {
-     alert("Validation failed: " + data.error.message); // Display validation error if any
-     return;
-   }      
- } catch (error) {
-   console.error("Error sending data:", error);
- }
-};
-
-
+  };
 
   return (
     <>
@@ -223,15 +182,18 @@ const getUserComment = async () => {
             <span className="text-xl font-medium">Rating:</span>
             <span className="ml-2 text-lg">{rating} (based on 2,370)</span>
           </div>
-          <Comment name={name} 
-          setName={setName} 
-           content={content}
+          <Comment 
+            name={name}
+            setName={setName} 
+            content={content}
             setContent={setContent}
-            getComment={sendData} />
+            getComment={sendData} 
+            comments={comments}  
+          />
         </div>
-        <ToastContainer position="top-right" autoClose={3000}  />
+        <ToastContainer position="top-right" autoClose={3000} />
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

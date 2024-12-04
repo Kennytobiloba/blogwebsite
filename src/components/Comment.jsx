@@ -1,57 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const Comment = ({name, content,  setContent, setName , getComment}) => {
- 
+const Comment = ({ name, content, setContent, setName, getComment, comments }) => {
 
+  // Handle the submission of a new comment
   const handlePostComment = () => {
     if (!name || !content) {
       alert("Please enter your name and comment.");
       return;
     }
     
-    getComment(name, content)
-    // alert(`Thank you for your comment, ${name}!`);
-    // You can integrate the submission functionality here
-    setName('');
-    setContent('');
-   
-
-
-
+    getComment(name, content); // Pass name and content to the parent function for submission
+    setName('');  // Reset the name input field
+    setContent('');  // Reset the content input field
   };
 
   return (
-    <div className="mt-8 bg-gray-50 p-6 rounded-lg shadow-md border border-gray-200">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800 border-b pb-2 border-gray-300">
+    <div className="mt-8 bg-white p-6 rounded-lg shadow-lg border border-gray-200 max-w-3xl mx-auto">
+      <h2 className="text-3xl font-semibold mb-6 text-gray-800 border-b pb-2 border-gray-300">
         Comments
       </h2>
-      {/* Dummy comment */}
-      <div className="border-b pb-4 mb-6">
-        <p className="font-medium text-blue-600">John Doe</p>
-        <p className="text-gray-700 bg-gray-100 p-3 rounded-lg mt-2">
-          This is a dummy comment for this blog post. Great article!
-        </p>
-        <p className="text-sm text-gray-500 mt-2">Posted on December 4, 2024</p>
-      </div>
+
+      {/* Check if comments exist and render accordingly */}
+      {comments && comments.length > 0 ? (
+        comments.map((comment, index) => (
+          <div key={index} className="border-b pb-4 mb-6">
+            <p className="font-medium text-blue-600">{comment.name}</p>
+            <p className="text-gray-700 bg-gray-100 p-4 rounded-lg mt-2 shadow-sm">
+              {comment.content}
+            </p>
+            <p className="text-sm text-gray-500 mt-2">
+              Posted on {new Date(comment.created_at).toLocaleDateString()}
+            </p>
+          </div>
+        ))
+      ) : (
+        <div className="text-gray-600 text-center py-4">
+          No comments available.
+        </div>
+      )}
+
       {/* Add new comment form */}
-      <div>
+      <div className="mt-6">
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+          className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-300 ease-in-out"
           placeholder="Enter your name"
         />
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+          className="w-full p-4 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-300 ease-in-out"
           placeholder="Add a comment..."
-          rows={3}
+          rows={4}
         ></textarea>
         <button
           onClick={handlePostComment}
-          className="bg-blue-500 text-white px-5 py-2 mt-4 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+          className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500 focus:outline-none"
         >
           Post Comment
         </button>
