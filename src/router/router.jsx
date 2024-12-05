@@ -16,6 +16,7 @@ import Profile from "../Page/Profile";
 import AdminUserUpdate from "../Page/dashboard/AdminUserUpdate";
 import SingleBlog from "../components/SingleBlog";
 import AllBlogPage from "../Page/AllBlogPage"
+import ManageComment from "../Page/dashboard/ManageComment";
 
 
 
@@ -81,6 +82,10 @@ import AllBlogPage from "../Page/AllBlogPage"
           {
             path:   "/dashboard/userupdate/:id",
             element:<AdminUserUpdate/>
+          },
+          {
+            path:   "/dashboard/comment",
+            element:<ManageComment/>
           },
 
         ]

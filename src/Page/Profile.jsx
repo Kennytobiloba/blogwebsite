@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { toast, ToastContainer } from "react-toastify";  // Import toast and ToastContainer from React Toastify
-import "react-toastify/dist/ReactToastify.css";  // Import toast CSS
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-
 
 const Profile = () => {
   const { user, token } = useSelector((state) => state.auth);
 
-  // Redirect to login if no user is found
   if (!user) {
     window.location.href = "/login";
   }
@@ -22,9 +20,11 @@ const Profile = () => {
     email: "",
   });
 
-  const [profileImage, setProfileImage] = useState(null); // State for profile image
+  const [profile_img, setProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [fileInputKey, setFileInputKey] = useState(Date.now());
+  const [isImageSelected, setIsImageSelected] = useState(false);
 
   useEffect(() => {
     getUser();
@@ -33,19 +33,21 @@ const Profile = () => {
   const id = user.data.uuid;
   const userId = id.replace(/^"|"$/g, "");
 
-  // Fetch user details when the component mounts
   const getUser = async () => {
     try {
       setLoading(true);
       setError(null);
-      const cleanToken = token.replace(/^"|"$/g, ""); // Cleaning the token
-      const response = await fetch(`https://abiodun.techtrovelab.com/api/users/${userId}/view`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cleanToken}`,
-        },
-      });
+      const cleanToken = token.replace(/^"|"$/g, "");
+      const response = await fetch(
+        `https://abiodun.techtrovelab.com/api/users/${userId}/view`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cleanToken}`,
+          },
+        }
+      );
 
       if (response.status === 401) {
         setError("Unauthorized. Please log in again.");
@@ -54,7 +56,6 @@ const Profile = () => {
 
       const data = await response.json();
       if (data) {
-        // Update the form data with the fetched user data
         setFormData({
           first_name: data.data.user.first_name || "",
           last_name: data.data.user.last_name || "",
@@ -65,83 +66,145 @@ const Profile = () => {
       }
     } catch (error) {
       setError("Failed to fetch user. Please try again.");
-      console.error("Error fetching user:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle input field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle file input change for profile image (passport)
   const handleFileChange = (e) => {
-    setProfileImage(e.target.files[0]);
+    const file = e.target.files[0];
+    setProfileImage(file);
+    setIsImageSelected(true);
+    setFileInputKey(Date.now());
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation for required fields
     if (!formData.first_name || !formData.last_name || !formData.description) {
       setError("Please fill in all the required fields.");
-      return; // Prevent the form from submitting if validation fails
+      return;
     }
 
     try {
       const cleanToken = token.replace(/^"|"$/g, "");
-      const response = await fetch(`https://abiodun.techtrovelab.com/api/users/${userId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json", // Ensure correct Content-Type
-          Authorization: `Bearer ${cleanToken}`,
-        },
-        body: JSON.stringify(formData), // Send the form data as JSON
-      });
+      const response = await fetch(
+        `https://abiodun.techtrovelab.com/api/users/${userId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cleanToken}`,
+          },
+          body: JSON.stringify(formData),
+        }
+      );
       const data = await response.json();
-      console.log(data, "dataaaa");
       if (response.ok) {
-        toast.success("Profile updated successfully!", {
-          position: "top-right",
-          autoClose: 3000,
-        });
+        toast.success("Profile updated successfully!");
       } else {
         setError(data.message || "Failed to update profile.");
-        toast.error(data.message || "Failed to update profile.", {
-          position: "top-right",
-          autoClose: 3000,
-        });
+        toast.error(data.message || "Failed to update profile.");
       }
     } catch (error) {
       setError("An error occurred while updating the profile.");
-      toast.error("An error occurred while updating the profile.", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      console.error("Error updating profile:", error);
+      toast.error("An error occurred while updating the profile.");
+    }
+  };
+
+  const uploadProfileImage = async () => {
+    if (!profile_img) {
+      toast.error("No image selected.");
+      return;
+    }
+
+    try {
+      const cleanToken = token.replace(/^"|"$/g, "");
+      const formData = new FormData();
+      formData.append("profile_image", profile_img);
+
+      const response = await fetch(
+        `https://abiodun.techtrovelab.com/api/users/profile/${userId}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${cleanToken}`,
+          },
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+      console.log("data", data)
+      if (response.ok) {
+        toast.success("Image uploaded successfully!");
+        setIsImageSelected(false);
+      } else {
+        throw new Error(data.message || "Failed to upload image.");
+      }
+    } catch (error) {
+      toast.error("Error uploading image. Please try again.");
     }
   };
 
   return (
     <>
-    <Navbar/>
-    <div className="max-w-lg mx-auto mt-10 p-6 border rounded-lg shadow-xl bg-white mb-10">
-      <h2 className="text-2xl font-semibold mb-6 text-center text-blue-700">Profile Information</h2>
+      <Navbar />
+      <div className="max-w-6xl mx-auto mt-10 p-6 border rounded-lg shadow-xl bg-white mb-10">
+        <h2 className="text-2xl font-semibold mb-6 text-center text-blue-700">
+          Profile Information
+        </h2>
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+        {loading && <p>Loading...</p>}
+        {error && <p className="text-red-500">{error}</p>}
 
-      <form onSubmit={handleSubmit}>
-        {/* User Information Section */}
-        <div className="space-y-6">
-          <div className="flex flex-wrap gap-4">
-            {/* First Name */}
-            <div className="flex flex-col w-full sm:w-full">
-              <label htmlFor="first_name" className="text-sm font-medium text-gray-700 mb-2">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="flex justify-start items-center flex-col">
+            <div className="w-40 h-40 rounded-full border-4 border-gray-300 flex items-center justify-center overflow-hidden">
+              <img
+                src={
+                  profile_img
+                    ? URL.createObjectURL(profile_img)
+                    : "/default-avatar.png"
+                }
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="mt-4 flex space-x-2">
+              <label
+                htmlFor="profile_img"
+                className="px-6 py-2 bg-blue-600 text-white rounded-md shadow-md cursor-pointer hover:bg-blue-700"
+              >
+                {isImageSelected ? "Save Image" : "Change Profile Image"}
+              </label>
+              <input
+                type="file"
+                id="profile_img"
+                onChange={handleFileChange}
+                key={fileInputKey}
+                className="hidden"
+              />
+            </div>
+            {isImageSelected && (
+              <button
+                type="button"
+                onClick={uploadProfileImage}
+                className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700"
+              >
+                Save Image
+              </button>
+            )}
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
                 First Name
               </label>
               <input
@@ -150,14 +213,12 @@ const Profile = () => {
                 name="first_name"
                 value={formData.first_name}
                 onChange={handleChange}
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+                className="mt-1 block w-full border rounded-md p-2"
                 required
               />
             </div>
-
-            {/* Last Name */}
-            <div className="flex flex-col w-full sm:w-full">
-              <label htmlFor="last_name" className="text-sm font-medium text-gray-700 mb-2">
+            <div>
+              <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
                 Last Name
               </label>
               <input
@@ -166,14 +227,12 @@ const Profile = () => {
                 name="last_name"
                 value={formData.last_name}
                 onChange={handleChange}
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+                className="mt-1 block w-full border rounded-md p-2"
                 required
               />
             </div>
-
-            {/* Email */}
-            <div className="flex flex-col w-full sm:w-full">
-              <label htmlFor="email" className="text-sm font-medium text-gray-700 mb-2">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email
               </label>
               <input
@@ -182,14 +241,12 @@ const Profile = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+                className="mt-1 block w-full border rounded-md p-2"
                 required
               />
             </div>
-
-            {/* Description */}
-            <div className="flex flex-col w-full sm:w-full">
-              <label htmlFor="description" className="text-sm font-medium text-gray-700 mb-2">
+            <div>
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
                 Description
               </label>
               <textarea
@@ -198,15 +255,12 @@ const Profile = () => {
                 value={formData.description}
                 onChange={handleChange}
                 rows="4"
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
-                placeholder="Tell us about yourself..."
+                className="mt-1 block w-full border rounded-md p-2"
                 required
               />
             </div>
-
-            {/* Gender */}
-            <div className="flex flex-col w-full sm:w-full">
-              <label htmlFor="gender" className="text-sm font-medium text-gray-700 mb-2">
+            <div>
+              <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
                 Gender
               </label>
               <select
@@ -214,47 +268,25 @@ const Profile = () => {
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+                className="mt-1 block w-full border rounded-md p-2"
               >
                 <option value="">Select Gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
             </div>
+            <button
+              type="submit"
+              className="w-full py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700"
+            >
+              Update Profile
+            </button>
           </div>
-        </div>
+        </form>
 
-        {/* Profile Image Section (Passport) */}
-        <div className="space-y-6 mt-8">
-          <div className="flex flex-col w-full sm:w-full">
-            <label htmlFor="profile_img" className="text-sm font-medium text-gray-700 mb-2">
-              Upload Passport / Profile Image
-            </label>
-            <input
-              type="file"
-              id="profile_img"
-              name="profile_img"
-              onChange={handleFileChange}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
-            />
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <div className="mt-6 flex justify-center">
-          <button
-            type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 focus:outline-none"
-          >
-            Update Profile
-          </button>
-        </div>
-      </form>
-
-      {/* ToastContainer positioned top right */}
-      <ToastContainer position="top-right" autoClose={3000} />
-    </div>
-    <Footer/>
+        <ToastContainer position="top-right" autoClose={3000} />
+      </div>
+      <Footer />
     </>
   );
 };

@@ -68,7 +68,7 @@ const AllBlogPage = () => {
     setFilters((prev) => ({
       ...prev,
       [name]: value,
-      page: 1, // Reset to page 1 on filter change
+      page: 1, 
     }));
   };
 

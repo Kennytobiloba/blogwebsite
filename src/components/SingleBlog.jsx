@@ -163,14 +163,14 @@ const SingleBlog = () => {
       <Navbar />
       <div className="bg-gray-100 min-h-screen p-8">
         <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h1 className="text-4xl font-semibold mb-4">{title}</h1>
+          <h1 className="lg:text-3xl md:text-2xl lg  font-semibold mb-4">{title}</h1>
           <img
             src={thumbnailUrl}
             alt={title}
             className="w-full h-auto rounded-lg shadow-md mb-6"
           />
           <p className="text-lg mb-6">
-            by <span className="text-blue-500 cursor-pointer">{article.user.first_name || 'Admin'}</span>
+           Posted by <span className="text-gray-600 font-roboto text-sm cursor-pointer">{article.user.first_name || 'Admin'}</span>
           </p>
           <div className="space-y-4">
             <div

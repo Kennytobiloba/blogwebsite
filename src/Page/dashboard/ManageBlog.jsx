@@ -6,8 +6,12 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Modal from "./Modal";
 import CommentModal from "./CommentModal";
+import { Pagination } from "@mui/material";
+import BlogFliter from "./BlogFliter";
 
 const ManageBlog = () => {
+
+ 
   const [commentModal, setCommentModal] = useState(null)
   const [iscommentOpen, setCommentOpen] = useState(false)
   const [selectUser, setSelectUser] = useState(null);
@@ -16,51 +20,67 @@ const ManageBlog = () => {
   const [loading, setLoading] = useState(true); // State to manage loading
   const { user, token } = useSelector((state) => state.auth); // Get user and token from Redux store
   const [users, setUsers] = useState([]); // State to hold users (if needed)
-  console.log(article, "userdelect");
-
-  // Redirect to login if user is not logged in
+  const [pagination, setPagination] = useState();
+  console.log(pagination, "pppp")
   if (!user) {
     window.location.href = "/login";
   }
 
-  useEffect(() => {
-    getAllArticles(); // Fetch all articles on component mount
-  }, []);
+  const [filters, setFilters] = useState({
+    from: "",
+    to: "",
+    status: "",
+    search:"",
+    page: 1,
+    perPage: 10,
+    sort: "asc",
+  });
+  // const { from, to, status, search, page, perPage, sort} = filters
+  // console.log("datform", status, page)
+
+ 
+
 
   // Fetch all articles
   const getAllArticles = async () => {
+    setLoading(true); // Start loading
     try {
-      console.log("Token being used:", token);
-      const cleanToken = token.replace(/^"|"$/g, ""); // Clean the token
-
-      const response = await fetch(
-        "https://abiodun.techtrovelab.com/api/articles",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cleanToken}`, // Pass the cleaned token
-          },
-        }
-      );
-
+      const { status, from, to, search, page, perPage, sort } = filters;
+      const cleanToken = token.replace(/^"|"$/g, "");
+      let url = `https://abiodun.techtrovelab.com/api/articles?page=${page}&perPage=${perPage}`;
+  
+      if (status) url += `&status=${status}`;
+      if (search) url += `&search=${search}`;
+      if (sort) url += `&sort=${sort}`;
+      if (status) url += `&status=${status}`;
+    
+      const response = await fetch(url, {
+        method: "GET",
+      });
+  
       const data = await response.json();
-      console.log("Data fetched: articles", data);
-      setArticle(data); // Set the fetched articles to state
-
-      if (response.status === 401) {
-        alert("Unauthorized. Please log in again.");
-        window.location.href = "/"; // Redirect to login if unauthorized
-        return;
+      console.log("data", )
+  
+      if (response.ok) {
+        setArticle(data);
+        setPagination(data.pagination);
+      } else {
+        toast.error(data.message || "Failed to fetch articles.");
       }
-
-      setUsers(data.data || []); // If needed, set users data
     } catch (error) {
       console.error("Error fetching articles:", error);
+      toast.error("An error occurred while fetching articles.");
     } finally {
-      setLoading(false); // Set loading to false once the data is fetched
+      setLoading(false); // Stop loading
     }
   };
+
+  useEffect(() => {
+    getAllArticles(); // Fetch all articles on component mount
+  }, [filters]);
+
+ 
+  
 
   const handleDelete = async (id) => {
     console.log("Article ID to delete:", id); // Debugging to ensure it's the correct value
@@ -173,14 +193,20 @@ const ManageBlog = () => {
     setIsModalOpen(false);
     
   };
-  
+  const handlePageChange = (event, page) => {
+  setFilters((prev) => ({ ...prev, page })); // Update filters with the new page
+}
   
 
   return (
-    <div className="w-full">
+    <div className=" ">
       <section className="py-1 bg-blueGray-50 w-full">
-        <div className="w-full mb-12 xl:mb-0 px-4 mx-auto mt-24">
-          <div className="relative flex flex-col break-words w-full mb-6 shadow-lg rounded">
+        <div className="w-full mb-12 xl:mb-0  mx-auto mt-20 py-10 px-2 ">
+          <div className="relative  flex flex-col break-words w-full mb-6 shadow-lg rounded  overflow-x-auto">
+          <BlogFliter
+             filters={filters}
+             setFilters={setFilters}
+            />
             <div className="rounded-t mb-0 px-4 py-3 border-0">
               <div className="flex flex-wrap items-center">
                 <div className="relative w-full px-4 max-w-full flex-grow flex-1">
@@ -203,14 +229,16 @@ const ManageBlog = () => {
                   </div>
                 </div>
               ) : (
-                <table className="items-center bg-transparent w-full border-collapse overflow-x-auto">
+               
+                <div className="block w-full overflow-x-auto">
+                   <table className="items-center bg-transparent w-full border-collapse">
                   <thead>
                     <tr>
                       <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                         No.
                       </th>
                       <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
-                        Blog Title
+                       Title
                       </th>
                       <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                         Publishing Date
@@ -223,7 +251,7 @@ const ManageBlog = () => {
                         Status
                       </th>
                       <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
-                        Edit or Manage
+                        Edit 
                       </th>
                       <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                         Delete
@@ -245,8 +273,11 @@ const ManageBlog = () => {
                             {index + 1}
                           </th>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                            {blog.title}
-                          </td>
+                          {blog.title.length > 30 ? `${blog.title.substring(0, 30)}...` : blog.title}
+                        </td>
+
+
+                          
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                             {new Date(blog.created_at).toLocaleString()}
                           </td>
@@ -297,8 +328,17 @@ const ManageBlog = () => {
                     )}
                   </tbody>
                 </table>
+                </div>
               )}
             </div>
+             <Pagination
+            count={pagination?.totalPages || 2}
+            page={pagination?.currentPage || 1}
+            onChange={handlePageChange}
+            variant="outlined"
+            color="primary"
+            style={{ marginTop: "20px" }}
+      />
           </div>
         </div>
         {isModalOpen && (

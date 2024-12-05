@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 
-const Modal = ({ user, onClose, onRoleUpdate, valueone, valuetwo, title }) => {
-  const [role, setRole] = useState(user?.status || 'inactive')
-  console.log("role", )
-  console.log(valueone, "valueone")
-  console.log(valuetwo, "valueone")
+const Modal = ({ user, onClose, onRoleUpdate, valueone, valuetwo, title, }) => {
+ 
+  const [role, setRole] = useState(user?.status)
+  // console.log("role", )
+  console.log("role one",  role)
+  // console.log(valuetwo, "valueone")
       
   const userId = user?.uuid?.replace(/^"|"$/g, "") || "";
 
@@ -15,12 +16,7 @@ const Modal = ({ user, onClose, onRoleUpdate, valueone, valuetwo, title }) => {
     onClose();
      console.log("user update", userId, role)
   };
-//   const handleStatusUpdate = async () => {
-//     onRoleUpdate(userId, role)
- 
-//    onClose();
-//     console.log("user update", userId, role)
-//  };
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -44,6 +40,7 @@ const Modal = ({ user, onClose, onRoleUpdate, valueone, valuetwo, title }) => {
             value={role}
             onChange={(e) => setRole(e.target.value)}
           >
+             {/* <option value={valuethree}>{valuethree}</option> */}
             <option value={valueone}>{valueone}</option>
             <option value={valuetwo}>{valuetwo}</option>
           </select>

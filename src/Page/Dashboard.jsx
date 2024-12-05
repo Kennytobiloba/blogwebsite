@@ -115,6 +115,14 @@ const Dashboard = () => {
               Manage User
             </Link>
           </div>
+          <div
+           onClick={closeToggle}
+           className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+            <BsBookmarkFill />
+            <Link to="/dashboard/comment"  className="text-[15px] ml-4 text-gray-200 font-bold">
+              Manage Comment
+            </Link>
+          </div>
          
           <div className="my-4 bg-gray-600 h-[1px]" />
 
@@ -135,7 +143,7 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1   max-w-[100%]">
+      <div className="flex-1   max-w-[100%]    overflow-x-scroll lg:overflow-x-hidden">
       <div className="flex-1 flex flex-col max-w-[100%]">
         {/* Top Navigation */}
         <div className="bg-gray-800 text-white p-4 flex justify-end lg:justify-between items-center">
