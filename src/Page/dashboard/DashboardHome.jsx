@@ -5,11 +5,13 @@ import { RiAdminLine } from "react-icons/ri";
 import { useSelector } from "react-redux";
 
 const DashboardHome = () => {
-  const { user, token } = useSelector((state) => state.auth); 
+  const { user, token } = useSelector((state) => state.auth);
   const [users, setUsers] = useState([]);
+  const [adminUsers, setAdminUsers] = useState([]); // Separate state for admin users
   const [article, setArticle] = useState();
-  const [loading, setLoading] = useState(true); // Loading state to track data fetching
-  
+  const [comment, setComment] = useState();
+  const [loading, setLoading] = useState(true);
+
   if (!user) {
     window.location.href = "/login";
   }
@@ -17,27 +19,30 @@ const DashboardHome = () => {
   useEffect(() => {
     getUser();
     getAllarticle();
+    getUserComment();
   }, []);
 
   // Get all users function
   const getUser = async () => {
     try {
-      console.log("Token being used:", token); 
-      const cleanToken = token.replace(/^"|"$/g, ""); 
+      const cleanToken = token.replace(/^"|"$/g, "");
       const response = await fetch("https://abiodun.techtrovelab.com/api/users", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${cleanToken}`, // Use the cleaned token
+          Authorization: `Bearer ${cleanToken}`,
         },
       });
-      
+
       const data = await response.json();
       if (response.status === 401) {
         alert("Unauthorized. Please log in again.");
         return;
       }
-      setUsers(data.data || []); // Update state with the users data
+
+      setUsers(data.data || []);
+      const admins = data.data?.filter((user) => user.is_admin === true); // Filter admin users
+      setAdminUsers(admins || []); // Update state with filtered admin users
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -46,18 +51,16 @@ const DashboardHome = () => {
   // Get all articles function
   const getAllarticle = async () => {
     try {
-      console.log("Token being used:", token); 
-      const cleanToken = token.replace(/^"|"$/g, ""); 
+      const cleanToken = token.replace(/^"|"$/g, "");
       const response = await fetch("https://abiodun.techtrovelab.com/api/articles", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${cleanToken}`, // Use the cleaned token
+          Authorization: `Bearer ${cleanToken}`,
         },
       });
-      
+
       const data = await response.json();
-      console.log("Data fetched: article", data);
       setArticle(data);
 
       if (response.status === 401) {
@@ -65,12 +68,35 @@ const DashboardHome = () => {
         window.location.href = "/";
         return;
       }
-
-      setUsers(data.data || []); // Update state with the users data
     } catch (error) {
       console.error("Error fetching articles:", error);
     } finally {
       setLoading(false); // Set loading to false once data is fetched
+    }
+  };
+
+  // Get all comments function
+  const getUserComment = async () => {
+    try {
+      const cleanToken = token.replace(/^"|"$/g, "");
+      const response = await fetch("https://abiodun.techtrovelab.com/api/comments", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cleanToken}`,
+        },
+      });
+
+      const data = await response.json();
+      setComment(data);
+
+      if (response.status === 401) {
+        alert("Unauthorized. Please log in again.");
+        window.location.href = "/";
+        return;
+      }
+    } catch (error) {
+      console.error("Error fetching comments:", error);
     }
   };
 
@@ -89,7 +115,7 @@ const DashboardHome = () => {
         <div className="bg-blue-50 p-6 rounded-lg shadow-sm">
           <h1 className="text-2xl font-bold text-blue-700">Hello, {user?.data.first_name}!</h1>
           <p className="text-gray-700 mt-2">
-            Welcome to the United Abia Artistes & Patriots Dashboard. Stay informed, manage articles, and celebrate the vibrant creativity of Abia State.
+            Welcome to the Unitimate Wrestling and Charity Organization  Dashboard. Stay informed, manage articles, and celebrate the vibrant creativity of Abia State.
           </p>
           <p className="text-gray-500 mt-2 italic">
             "Empowering Artistes, Uniting Patriots, Inspiring Generations."
@@ -108,25 +134,25 @@ const DashboardHome = () => {
               {/* Users */}
               <div className="bg-indigo-100 py-6 w-full rounded-lg shadow-md hover:shadow-lg transition-all space-y-1 flex flex-col items-center">
                 <FiUsers className="text-4xl text-indigo-600" />
-                <p className="text-indigo-700 font-semibold">{users ? users?.length : "0"} Registered Users</p>
+                <p className="text-indigo-700 font-semibold">{users.length} Registered Users</p>
               </div>
 
               {/* Blogs */}
               <div className="bg-red-100 py-6 w-full rounded-lg shadow-md hover:shadow-lg transition-all space-y-1 flex flex-col items-center">
                 <FaBlog className="text-4xl text-red-600" />
-                <p className="text-red-700 font-semibold">{article ? article?.data?.length : "0"}  Published Articles</p>
+                <p className="text-red-700 font-semibold">{article?.data?.length || "0"} Published Articles</p>
               </div>
 
               {/* Admins */}
               <div className="bg-lime-100 py-6 w-full rounded-lg shadow-md hover:shadow-lg transition-all space-y-1 flex flex-col items-center">
                 <RiAdminLine className="text-4xl text-lime-600" />
-                <p className="text-lime-700 font-semibold">3 Admins</p>
+                <p className="text-lime-700 font-semibold">{adminUsers.length} Admins</p> {/* Display admin users count */}
               </div>
 
               {/* Comments */}
               <div className="bg-orange-100 py-6 w-full rounded-lg shadow-md hover:shadow-lg transition-all space-y-1 flex flex-col items-center">
                 <FaRegComment className="text-4xl text-orange-600" />
-                <p className="text-orange-700 font-semibold">12 Comments</p>
+                <p className="text-orange-700 font-semibold">{comment?.data?.length || "0"} Comments</p>
               </div>
             </>
           )}

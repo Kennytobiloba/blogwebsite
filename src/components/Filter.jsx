@@ -2,7 +2,6 @@ import React from "react";
 
 const Filter = ({ filters, setFilters }) => {
   const { status, from, to, search, page, perPage, sort } = filters;
-  // console.log(search, sort, perPage, status ,"findfliter")
 
   // Handle input changes
   const handleChange = (e) => {
@@ -15,26 +14,18 @@ const Filter = ({ filters, setFilters }) => {
 
   return (
     <div className="flex gap-2 mb-4 flex-wrap lg:flex-nowrap px-2 mt-4">
-      {/* Search Input */}
-      <input
-        type="text"
-        name="search"
-        placeholder="Search by title"
-        className="border rounded p-2 w-full"
-        value={search}
-        onChange={handleChange}
-      />
-      
-      {/* Sort Dropdown */}
-      <select
-        className="border rounded p-2"
-        name="sort"
-        value={sort}
-        onChange={handleChange}
-      >
-        <option value="asc">Sort A-Z</option>
-        <option value="desc">Sort Z-A</option>
-      </select>
+      {/* Search Input with Icon */}
+      <div className="relative w-full lg:w-3/4 "> {/* Adjust width for responsiveness */}
+        <input
+          type="text"
+          name="search"
+          placeholder="Search by title"
+          className="border rounded-l p-2 w-full pr-10" // Reduced padding and added space for icon
+          value={search}
+          onChange={handleChange}
+        />
+       
+      </div>
 
       {/* Per Page Dropdown */}
       <select
@@ -47,9 +38,6 @@ const Filter = ({ filters, setFilters }) => {
         <option value={10}>10 per page</option>
         <option value={20}>20 per page</option>
       </select>
-
-      {/* Status Dropdown */}
-     
     </div>
   );
 };

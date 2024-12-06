@@ -109,6 +109,7 @@ const Profile = () => {
       const data = await response.json();
       if (response.ok) {
         toast.success("Profile updated successfully!");
+        window.location.href = "/dashboard";
       } else {
         setError(data.message || "Failed to update profile.");
         toast.error(data.message || "Failed to update profile.");

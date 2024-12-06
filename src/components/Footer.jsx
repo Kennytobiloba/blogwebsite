@@ -9,9 +9,10 @@ const Footer = () => {
           <div>
             <h3 className="text-2xl font-semibold mb-4 text-gray-200">Contact Us</h3>
             <ul className="space-y-2">
-              <li className="hover:text-blue-300 transition-colors">Email: support@example.com</li>
+              <li className="hover:text-blue-300 transition-colors">Email: info@uaapf.org</li>
               <li className="hover:text-blue-300 transition-colors">Phone: +123 456 7890</li>
-              <li className="hover:text-blue-300 transition-colors">Address: 123 Main Street, City, Country</li>
+              <li className="hover:text-blue-300 transition-colors">Address: 
+              14 Ojike Street By Azikiwe Road Umuahia</li>
             </ul>
           </div>
 
@@ -58,7 +59,7 @@ const Footer = () => {
 
         {/* Bottom Section (Copyright Info) */}
         <div className="mt-12 text-center text-sm text-gray-200">
-          <p>&copy; 2024 Your Company. All rights reserved.</p>
+          <p>All rights reserved.</p>
         </div>
       </div>
     </footer>

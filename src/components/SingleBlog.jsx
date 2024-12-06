@@ -169,7 +169,7 @@ const SingleBlog = () => {
             className="w-full h-auto rounded-lg shadow-md mb-6"
           />
           <p className="text-lg mb-6">
-            <span className="text-gray-600 font-roboto text-sm cursor-pointer"> Posted by{article?.user?.first_name || 'Admin'}</span>
+            <span className="text-gray-600 font-roboto text-sm cursor-pointer"> Posted by {article?.user?.first_name || 'Admin'}</span>
           </p>
           <div className="space-y-4">
             <div
