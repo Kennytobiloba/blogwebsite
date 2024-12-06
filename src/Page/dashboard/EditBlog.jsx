@@ -31,8 +31,10 @@ const EditBlog = () => {
     const fetchBlog = async () => {
       try {
         const cleanToken = token.replace(/^"|"$/g, "");
+        const uuid = id.replace(/^"|"$/g, "");
+        
         const response = await fetch(
-          `https://abiodun.techtrovelab.com/api/articles`,
+          `https://abiodun.techtrovelab.com/api/articles/${uuid}`,
           {
             headers: {
               Authorization: `Bearer ${cleanToken}`,
@@ -124,6 +126,8 @@ const EditBlog = () => {
             },
           }
         );
+         const data = response.json()
+         console.log(data, "data")
 
         if (response.ok) {
           alert("Blog updated successfully!");

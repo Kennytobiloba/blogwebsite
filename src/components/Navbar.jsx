@@ -105,7 +105,7 @@ const Navbar = () => {
                       </button>
                     </Link>
                   </li>
-                  <Link to="/profile" className="flex items-center space-x-2">
+                  <Link to="" className="flex items-center space-x-2">
                     <FaUserCircle size={20} className="text-white" />
                     <span className="text-white">{user.data.first_name}</span>
                   </Link>

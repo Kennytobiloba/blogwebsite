@@ -242,7 +242,6 @@ const Profile = () => {
                 id="email"
                 name="email"
                 value={formData.email}
-                onChange={handleChange}
                 className="mt-1 block w-full border rounded-md p-2"
                 required
               />
@@ -278,8 +277,8 @@ const Profile = () => {
               </select>
             </div>
                 <div className="mt-4 text-center">
-              <Link to="/forgotpassword" className="text-blue-600 hover:underline">
-                Forgot your password?
+              <Link to="/Resetpassword" className="text-blue-600 hover:underline">
+                Reset your password?
               </Link>
             </div>
             <button

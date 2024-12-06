@@ -11,7 +11,7 @@ import Footer from './Footer';
 const editorJSParser = EditorJSHTML();
 
 const SingleBlog = () => {
-  const { user, token } = useSelector((state) => state.auth);
+ 
   const { id } = useParams(); // Move `useParams` here to avoid potential issues
 
   const [article, setArticle] = useState(null);
@@ -33,8 +33,9 @@ const SingleBlog = () => {
 
   // Function to fetch article details
   const getArticle = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
+    
       setError(null);
       const response = await fetch(`https://abiodun.techtrovelab.com/api/articles/${id}`, {
         method: "GET",
@@ -71,28 +72,28 @@ const SingleBlog = () => {
   // Function to fetch comments
   const getUserComment = async () => {
     const uuid = id.replace(/^"|"$/g, "");
-    console.log("uuid comment", uuid)
     try {
-      const response = await fetch(`https://abiodun.techtrovelab.com/api/article/${uuid}`,{
+      const response = await fetch(`https://abiodun.techtrovelab.com/api/article/${uuid}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      console.log(data, "data coment")
-
-      if (response.ok) {
-        setComments(data.data);  // Set fetched comments
-        getUserComment()
-      } else {
+  
+      if (!response.ok) {
         setError("Failed to load comments.");
+        return;
       }
+  
+      const data = await response.json();
+      console.log(data, "data comments");
+      setComments(data.data); // Ensure the correct path to the comments in your API response
     } catch (error) {
       setError("Error fetching comments.");
       console.error("Error fetching comments:", error);
     }
   };
+  
 
   // Fetch article and comments when component is mounted or `id` changes
   useEffect(() => {
@@ -113,9 +114,7 @@ const SingleBlog = () => {
     return <div className="text-center text-red-500">{error}</div>;
   }
 
-  if (!article) {
-    return <div className="text-center">No article found</div>;
-  }
+  
 
   // If article is fetched successfully, parse content
   let htmlContent = "";
@@ -123,10 +122,10 @@ const SingleBlog = () => {
     htmlContent = editorJSParser.parse(article.content).join('');
   }
 
-  const { title, author, rating, thumbnail } = article;
+  
   const thumbnailUrl =
-    thumbnail && thumbnail.length > 0
-      ? `https://abiodun.techtrovelab.com${thumbnail[0]}`
+    article?.thumbnail && article?.thumbnail.length > 0
+      ? `https://abiodun.techtrovelab.com${article?.thumbnail[0]}`
       : "https://via.placeholder.com/600"; // Fallback image URL
 
   const sendData = async () => {
@@ -163,14 +162,14 @@ const SingleBlog = () => {
       <Navbar />
       <div className="bg-gray-100 min-h-screen p-8">
         <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h1 className="lg:text-3xl md:text-2xl lg  font-semibold mb-4">{title}</h1>
+          <h1 className="lg:text-3xl md:text-2xl lg  font-semibold mb-4">{article?.title}</h1>
           <img
             src={thumbnailUrl}
-            alt={title}
+            alt={article?.title}
             className="w-full h-auto rounded-lg shadow-md mb-6"
           />
           <p className="text-lg mb-6">
-           Posted by <span className="text-gray-600 font-roboto text-sm cursor-pointer">{article.user.first_name || 'Admin'}</span>
+            <span className="text-gray-600 font-roboto text-sm cursor-pointer"> Posted by{article?.user?.first_name || 'Admin'}</span>
           </p>
           <div className="space-y-4">
             <div
@@ -178,10 +177,7 @@ const SingleBlog = () => {
               className="prose prose-lg space-y-4"
             />
           </div>
-          <div className="mt-6">
-            <span className="text-xl font-medium">Rating:</span>
-            <span className="ml-2 text-lg">{rating} (based on 2,370)</span>
-          </div>
+          
           <Comment 
             name={name}
             setName={setName} 

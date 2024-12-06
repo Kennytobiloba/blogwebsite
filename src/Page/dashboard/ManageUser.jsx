@@ -207,7 +207,7 @@ const ManageUser = () => {
                 <option value={10}>10 per page</option>
                 <option value={20}>20 per page</option>
               </select> */}
-               <Link to="/profile" className='px-4 bg-blue-500 py-2 text-white border rounded-md'>Add user</Link>
+               <Link to="/register" className='px-4 bg-blue-500 py-2 text-white border rounded-md'>Add user</Link>
                  </div>
               <div className="rounded-t mb-0 px-4 py-3 border-0">
                 <div className="flex flex-wrap items-center">

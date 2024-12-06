@@ -63,7 +63,7 @@ const Dashboard = () => {
             <div className="p-2.5 mt-1 flex items-center">
               <BsBookmarkFill className="px-2 py-1 rounded-md bg-blue-600" />
               <h1 className="font-bold text-gray-200 text-[15px] ml-3">
-                TailwindCSS
+                TUWCO
               </h1>
               <BsX
                 className="cursor-pointer ml-auto lg:hidden"
@@ -74,14 +74,7 @@ const Dashboard = () => {
           </div>
 
           {/* Search box */}
-          <div className="p-2.5 flex items-center rounded-md px-4 duration-300 cursor-pointer bg-gray-700 text-white">
-            <BsSearch className="text-sm" />
-            <input
-              type="text"
-              placeholder="Search"
-              className="text-[15px] ml-4 w-full bg-transparent focus:outline-none"
-            />
-          </div>
+         
 
           {/* Menu items */}
           <div 
@@ -89,15 +82,6 @@ const Dashboard = () => {
           className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <BsHouseDoorFill />
             <Link to="/dashboard" className="text-[15px] ml-4 text-gray-200 font-bold">Home</Link>
-          </div>
-
-          <div
-           onClick={closeToggle}
-           className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
-            <BsBookmarkFill />
-            <Link to="/dashboard/createpost" className="text-[15px] ml-4 text-gray-200 font-bold">
-              Create a Article
-            </Link>
           </div>
           <div 
            onClick={closeToggle}
@@ -123,6 +107,15 @@ const Dashboard = () => {
               Manage Comment
             </Link>
           </div>
+          <div
+           onClick={closeToggle}
+           className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+            <BsBookmarkFill />
+            <Link to="/profile"  className="text-[15px] ml-4 text-gray-200 font-bold">
+              Profile
+            </Link>
+          </div>
+          
          
           <div className="my-4 bg-gray-600 h-[1px]" />
 

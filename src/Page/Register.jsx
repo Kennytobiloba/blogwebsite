@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom"; // Import Link if using React Router
 import toast, { Toaster } from "react-hot-toast";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -59,7 +61,7 @@ const Register = () => {
         const data = await res.json();
         console.log("register", data)
         localStorage.setItem("user", JSON.stringify(data));
-        // window.location.href = "/";
+        window.location.href = "/dashboard/manageuser";
       } else {
         toast.error("Failed to register user.");
       }
@@ -69,7 +71,9 @@ const Register = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+   <>
+   <Navbar/>
+   <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <Toaster position="top-right" />
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
         <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
@@ -230,20 +234,12 @@ const Register = () => {
           </div>
 
           {/* Already have an account */}
-          <div className="text-center mt-4">
-            <p className="text-sm text-gray-600">
-              Already have an account?{" "}
-              <Link
-                to="/login"
-                className="text-blue-500 hover:underline font-medium"
-              >
-                Login here
-              </Link>
-            </p>
-          </div>
+         
         </form>
       </div>
     </div>
+    <Footer/>
+   </>
   );
 };
 

@@ -127,13 +127,10 @@ const Login = () => {
 
         {/* Register link */}
         <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600">
-            You don't have an account?{" "}
-            <Link to="/register" className="text-blue-500 hover:underline">
-              Register
-            </Link>
-          </p>
-        </div>
+              <Link to="/forgetPaasword" className="text-blue-600 hover:underline">
+                Forgot your password?
+              </Link>
+            </div>
       </div>
     </div>
   );

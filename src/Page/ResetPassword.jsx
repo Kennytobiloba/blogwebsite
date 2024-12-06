@@ -3,9 +3,16 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import { useSelector } from "react-redux";
 // import { useHistory } from "react-router-dom";
 
-const  ForgetPassword = () => {
+
+const  ResetPassword = () => {
+  const { user, token } = useSelector((state) => state.auth);
+
+  if (!user) {
+    window.location.href = "/login";
+  }
   const [formData, setFormData] = useState({
     current_password: "",
     password: "",
@@ -20,6 +27,10 @@ const  ForgetPassword = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+  const id = user.data.uuid;
+  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,25 +52,31 @@ const  ForgetPassword = () => {
 
     setLoading(true);
     setError(null);
+    const userId = id.replace(/^"|"$/g, "");
 
     try {
+      const cleanToken = token.replace(/^"|"$/g, "");
       // Prepare the data for the PUT request
       const response = await fetch("https://abiodun.techtrovelab.com/api/security/change-pass", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${cleanToken}`,
         },
         body: JSON.stringify({
           current_password: formData.current_password,
           password: formData.password,
           password_confirmation: formData.password_confirmation,
         }),
+        
       });
 
       const data = await response.json();
+      console.log(data, "data")
 
       if (response.ok) {
         toast.success("Password reset successfully!");
+        window.location.href = "/dashboard"
         
       } else {
         setError(data.message || "Failed to reset password.");
@@ -76,7 +93,7 @@ const  ForgetPassword = () => {
   return (
     <>
     <Navbar/>
-     <div className="max-w-md mx-auto mt-10 p-6 border rounded-lg shadow-xl bg-white mb-20 mt-6">
+     <div className="max-w-md mx-auto mt-10 lg:p-6 p-10 border rounded-lg shadow-xl bg-white mb-20 ">
       <h2 className="text-2xl font-semibold mb-6 text-center text-blue-700">
         Reset Your Password
       </h2>
@@ -158,4 +175,4 @@ const  ForgetPassword = () => {
   );
 };
 
-export default ForgetPassword;
+export default ResetPassword;
