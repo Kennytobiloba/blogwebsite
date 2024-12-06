@@ -9,7 +9,7 @@ const Footer = () => {
           <div>
             <h3 className="text-2xl font-semibold mb-4 text-gray-200">Contact Us</h3>
             <ul className="space-y-2">
-              <li className="hover:text-blue-300 transition-colors">Email: info@uaapf.org</li>
+              <li className="hover:text-blue-300 transition-colors">Email: info@tuwco.org</li>
               <li className="hover:text-blue-300 transition-colors">Phone: +123 456 7890</li>
               <li className="hover:text-blue-300 transition-colors">Address: 
               14 Ojike Street By Azikiwe Road Umuahia</li>

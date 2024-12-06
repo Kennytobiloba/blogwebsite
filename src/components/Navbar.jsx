@@ -86,14 +86,9 @@ const Navbar = () => {
                 <Link to="/" className="block py-2 text-white lg:bg-transparent lg:p-0">Home</Link>
               </li>
               <li>
-                <Link to="/allblogs" className="block py-2 text-white lg:bg-transparent lg:p-0">Blog</Link>
+                <Link to="/allblogs" className="block py-2 text-white lg:bg-transparent lg:p-0">Blogs</Link>
               </li>
-              <li>
-                <a href="#" className="block py-2 text-white lg:bg-transparent lg:p-0">Team</a>
-              </li>
-              <li>
-                <a href="#" className="block py-2 text-white lg:bg-transparent lg:p-0">Contact</a>
-              </li>
+              
 
               {/* Conditional rendering based on user */}
               {user ? (

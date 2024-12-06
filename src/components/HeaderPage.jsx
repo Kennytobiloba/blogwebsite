@@ -15,7 +15,7 @@ const HeaderPage = () => {
         <div className='flex gap-4 justify-center items-center'>
         <span><i className="fa-solid fa-envelope"></i></span>
         <h3 className='font-bold'> Email Address:</h3>
-        <h5 className='text-sm'> info@uaapf.org</h5>
+        <h5 className='text-sm'>info@tuwco.org</h5>
         </div>
 
         {/* icons */}

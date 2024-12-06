@@ -18,10 +18,12 @@ const ManageBlog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [article, setArticle] = useState([]); // State to hold articles
   const [loading, setLoading] = useState(true); // State to manage loading
-  const { user, token } = useSelector((state) => state.auth); // Get user and token from Redux store
+
   const [users, setUsers] = useState([]); // State to hold users (if needed)
   const [pagination, setPagination] = useState();
   // console.log(pagination, "pppp")
+  const { user, token } = useSelector((state) => state.auth); 
+  // console.log(user , "userss")
   if (!user) {
     window.location.href = "/login";
   }
@@ -81,7 +83,7 @@ const ManageBlog = () => {
 
  
   
-
+// handle delect
   const handleDelete = async (id) => {
     console.log("Article ID to delete:", id); // Debugging to ensure it's the correct value
 
@@ -99,7 +101,7 @@ const ManageBlog = () => {
       );
 
       const data = await response.json();
-      console.log("Delete response", data);
+      // console.log("Delete response", data);
 
       if (response.ok) {
         toast.success("Article deleted successfully");
@@ -113,7 +115,7 @@ const ManageBlog = () => {
       toast.error("An error occurred while deleting the article");
     }
   };
-
+//  handle roleupdate
   const handleRoleUpdate = async (id, status) => {
     try {
       const cleanToken = token.replace(/^"|"$/g, "");
@@ -143,6 +145,7 @@ const ManageBlog = () => {
     }
   };
 
+// handle commentUpdate
   const handleCommenntUupdate = async (id, status) => {
     try {
       const cleanToken = token.replace(/^"|"$/g, "");

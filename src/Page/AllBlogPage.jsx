@@ -87,17 +87,7 @@ const AllBlogPage = () => {
           loading={loading}
         />
 
-        {/* Pagination */}
-        {pagination && (
-          <div className="flex justify-center mt-6">
-            <button
-              className="bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700"
-              onClick={() => setFilters({ ...filters, page: pagination.page + 1 })}
-            >
-              Load More Articles
-            </button>
-          </div>
-        )}
+       
       </div>
 
       <ToastContainer position="top-right" autoClose={3000} />

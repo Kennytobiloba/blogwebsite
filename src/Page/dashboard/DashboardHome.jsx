@@ -11,6 +11,11 @@ const DashboardHome = () => {
   const [article, setArticle] = useState();
   const [comment, setComment] = useState();
   const [loading, setLoading] = useState(true);
+  const [articlePublish, setArticlePublished] = useState([])
+  const [draftArticle, setdraftArticle] = useState([])
+  const [approved , SetApproved] = useState([])
+  const [decline, setDecline] = useState([])
+  const [pending, setPending] = useState([])
 
   if (!user) {
     window.location.href = "/login";
@@ -42,6 +47,7 @@ const DashboardHome = () => {
 
       setUsers(data.data || []);
       const admins = data.data?.filter((user) => user.is_admin === true); // Filter admin users
+      // console.log("user", admins)
       setAdminUsers(admins || []); // Update state with filtered admin users
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -61,7 +67,11 @@ const DashboardHome = () => {
       });
 
       const data = await response.json();
-      setArticle(data);
+      const published = data.data?.filter((article) => article.status === "published"); 
+      setArticlePublished(published)
+      const draft = data.data?.filter((article) => article.status === "draft"); 
+      // console.log("article", draft)
+      setdraftArticle(draft);
 
       if (response.status === 401) {
         alert("Unauthorized. Please log in again.");
@@ -88,7 +98,16 @@ const DashboardHome = () => {
       });
 
       const data = await response.json();
+      console.log("data", data)
       setComment(data);
+      const approved = data.data?.filter((article) => article.status === "approved"); 
+      SetApproved(approved)
+      const delined = data.data?.filter((article) => article.status === "declined");
+      setDecline(delined) 
+      const pending = data.data?.filter((article) => article.status === "pending");
+      setPending(pending)
+      // console.log("article", draft)
+      // setdraftArticle(draft);
 
       if (response.status === 401) {
         alert("Unauthorized. Please log in again.");
@@ -134,25 +153,32 @@ const DashboardHome = () => {
               {/* Users */}
               <div className="bg-indigo-100 py-6 w-full rounded-lg shadow-md hover:shadow-lg transition-all space-y-1 flex flex-col items-center">
                 <FiUsers className="text-4xl text-indigo-600" />
-                <p className="text-indigo-700 font-semibold">{users.length} Registered Users</p>
+                <p className="text-indigo-700 font-semibold">Users</p>
+                <p className="text-indigo-700 text-sm">{users.length} Registered Users</p>
               </div>
 
               {/* Blogs */}
               <div className="bg-red-100 py-6 w-full rounded-lg shadow-md hover:shadow-lg transition-all space-y-1 flex flex-col items-center">
                 <FaBlog className="text-4xl text-red-600" />
-                <p className="text-red-700 font-semibold">{article?.data?.length || "0"} Published Articles</p>
+                   <p className="text-red-700 font-semibold">Articles</p>
+                <p className="text-red-700 text-sm"> Published {articlePublish.length}</p>
+                  <p className="text-red-700 text-sm"> Draft {draftArticle.length} </p>
               </div>
 
               {/* Admins */}
               <div className="bg-lime-100 py-6 w-full rounded-lg shadow-md hover:shadow-lg transition-all space-y-1 flex flex-col items-center">
                 <RiAdminLine className="text-4xl text-lime-600" />
-                <p className="text-lime-700 font-semibold">{adminUsers.length} Admins</p> {/* Display admin users count */}
+                <p className="text-lime-700 font-semibold"> Admins</p> 
+                <p className="text-lime-700 text-sm">{adminUsers.length} Admins</p> {/* Display admin users count */}
               </div>
 
               {/* Comments */}
               <div className="bg-orange-100 py-6 w-full rounded-lg shadow-md hover:shadow-lg transition-all space-y-1 flex flex-col items-center">
                 <FaRegComment className="text-4xl text-orange-600" />
-                <p className="text-orange-700 font-semibold">{comment?.data?.length || "0"} Comments</p>
+                <p className="text-orange-700 font-semibold">Comments </p>
+                <p className="text-orange-700 text-sm ">Pending {pending.length} </p>
+                <p className="text-orange-700 text-sm"> Approved {approved.length} </p>
+                <p className="text-orange-700 text-sm">Declined {decline.length}</p>
               </div>
             </>
           )}

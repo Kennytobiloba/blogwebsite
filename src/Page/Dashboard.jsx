@@ -12,10 +12,12 @@ import {
 } from "react-icons/bs";
 import { Link, Outlet } from "react-router-dom";
 import { logOut } from "../redux/authSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
 
 
 const Dashboard = () => {
+  const { user, token } = useSelector((state) => state.auth);
    const dispatch = useDispatch()
    
   const [sidebarVisible, setSidebarVisible] = useState(false); // To toggle sidebar visibility
@@ -79,7 +81,7 @@ const Dashboard = () => {
           {/* Menu items */}
           <div 
           onClick={closeToggle}
-          className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+          className="p-2.5 flex  mt-20 items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <BsHouseDoorFill />
             <Link to="/dashboard" className="text-[15px] ml-4 text-gray-200 font-bold">Home</Link>
           </div>
@@ -91,7 +93,9 @@ const Dashboard = () => {
               Manage Article
             </Link>
           </div>
-          <div
+          {
+            user.is_admin === false && (
+              <div
            onClick={closeToggle}
            className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <BsBookmarkFill />
@@ -99,6 +103,9 @@ const Dashboard = () => {
               Manage User
             </Link>
           </div>
+            )
+          }
+          
           <div
            onClick={closeToggle}
            className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">

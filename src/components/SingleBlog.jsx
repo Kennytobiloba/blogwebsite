@@ -9,6 +9,11 @@ import "react-toastify/dist/ReactToastify.css";
 import Footer from './Footer';
 
 const editorJSParser = EditorJSHTML();
+const formatDateTime = (dateTimeString) => {
+  if (!dateTimeString) return '';
+  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  return new Date(dateTimeString).toLocaleDateString(undefined, options);
+};
 
 const SingleBlog = () => {
  
@@ -54,6 +59,7 @@ const SingleBlog = () => {
       }
 
       const data = await response.json();
+       console.log(data, "data")
       if (data?.data?.content) {
         const updatedContent = safeJsonParse(data?.data?.content);
         setArticle({ ...data.data, content: updatedContent });
@@ -168,9 +174,16 @@ const SingleBlog = () => {
             alt={article?.title}
             className="w-full h-auto rounded-lg shadow-md mb-6"
           />
-          <p className="text-lg mb-6">
-            <span className="text-gray-600 font-roboto text-sm cursor-pointer"> Posted by {article?.user?.first_name || 'Admin'}</span>
+           <p className="text-sm text-gray-600 mb-4">
+            Posted by {article?.user?.first_name || 'Admin'} on{" "}
+            <span className="font-medium">{formatDateTime(article?.created_at)}</span>
           </p>
+          {article?.updated_at && (
+            <p className="text-sm text-gray-500 mb-4">
+              Last updated: <span className="font-medium">{formatDateTime(article?.updated_at)}</span>
+            </p>
+          )}
+        
           <div className="space-y-4">
             <div
               dangerouslySetInnerHTML={{ __html: htmlContent }}

@@ -24,7 +24,9 @@ const ManageUser = () => {
     perPage:10
   })
   
-  // console.log("locked", pagination)
+  if(!user || !user.is_admin){
+    window.location.href = "/dashboard"; // Redirect to login if not admin
+  }
  
   const {page, is_locked , perPage} = filters
   // console.log("page", perPage)
@@ -197,16 +199,7 @@ const ManageUser = () => {
                 <option value={0}>Active</option>
                 <option value={1}>Locked</option>
               </select>
-              {/* <select
-                className="border rounded p-2"
-                name="perPage"
-                value={perPage}
-                onChange={handleFilterChange}
-              >
-                <option value={5}>5 per page</option>
-                <option value={10}>10 per page</option>
-                <option value={20}>20 per page</option>
-              </select> */}
+              
                <Link to="/register" className='px-4 bg-blue-500 py-2 text-white border rounded-md'>Add user</Link>
                  </div>
               <div className="rounded-t mb-0 px-4 py-3 border-0">
