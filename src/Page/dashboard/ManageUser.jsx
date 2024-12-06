@@ -24,7 +24,7 @@ const ManageUser = () => {
     perPage:10
   })
   
-  if(!user || !user.is_admin){
+  if(!user || !user.data.is_admin){
     window.location.href = "/dashboard"; // Redirect to login if not admin
   }
  

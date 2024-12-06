@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 const Dashboard = () => {
   const { user, token } = useSelector((state) => state.auth);
    const dispatch = useDispatch()
+   console.log(user, "user")
    
   const [sidebarVisible, setSidebarVisible] = useState(false); // To toggle sidebar visibility
   const [dropdownVisible, setDropdownVisible] = useState(false); // To toggle dropdown menu
@@ -94,15 +95,15 @@ const Dashboard = () => {
             </Link>
           </div>
           {
-            user.is_admin === false && (
+            user.data.is_admin === true && (
               <div
-           onClick={closeToggle}
-           className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
-            <BsBookmarkFill />
-            <Link to="/dashboard/manageuser"  className="text-[15px] ml-4 text-gray-200 font-bold">
-              Manage User
-            </Link>
-          </div>
+              onClick={closeToggle}
+              className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+               <BsBookmarkFill />
+               <Link to="/dashboard/manageuser"  className="text-[15px] ml-4 text-gray-200 font-bold">
+                 Manage User
+               </Link>
+             </div>
             )
           }
           
