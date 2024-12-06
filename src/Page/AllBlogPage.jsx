@@ -20,7 +20,7 @@ const AllBlogPage = () => {
     search: "",
     page: 1,
     perPage: 10,
-    sort: "asc",
+    sort: "desc",
   });
 
   // Fetch articles with filters applied
@@ -28,11 +28,11 @@ const AllBlogPage = () => {
     setLoading(true);
     try {
       const { status, from, to, search, page, perPage, sort } = filters;
-      let url = `https://abiodun.techtrovelab.com/api/articles?page=${page}&perPage=${perPage}`;
+      let url = `https://abiodun.techtrovelab.com/api/articles?page=${page}&perPage=${perPage}&sort=${sort}`;
 
       if (status) url += `&status=${status}`;
       if (search) url += `&search=${search}`;
-      if (sort) url += `&sort=${sort}`;
+      // if (sort) url += `&sort=${sort}`;
       if (status) url += `&status=${status}`;
 
       const response = await fetch(url, {
@@ -43,7 +43,7 @@ const AllBlogPage = () => {
 
       if (response.ok) {
         const sortedArticles = data.data
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
           .slice(0, 10);
         setArticle(sortedArticles);
         setPagination(data.pagination);

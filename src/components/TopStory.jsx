@@ -3,6 +3,7 @@ import Blogs from './Blogs';
 
 const TopStory = () => {
   const [article, setArticle] = useState();
+  const [sort, setSort] = useState("desc");
 
   // Function to safely parse JSON or return the original content if it's not valid JSON
   const safeJsonParse = (content) => {
@@ -15,9 +16,12 @@ const TopStory = () => {
   };
 
   // Get all articles function
-  const getAllarticle = async () => {
+  const getAllarticle = async () => { 
+     const sortarticle = {
+      sort
+     }
     try {
-      const response = await fetch(`https://abiodun.techtrovelab.com/api/articles?limit=6`, {
+      const response = await fetch(`https://abiodun.techtrovelab.com/api/articles?sort=${sort}`, {
         method: "GET",
       });
 
@@ -30,8 +34,8 @@ const TopStory = () => {
 
       if (data && data.data && Array.isArray(data.data)) {
         // Sort articles by 'createdAt' field in descending order (most recent first)
-        const sortedArticles = data.data
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        const sortedArticles = data.data 
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
           .slice(0, 6); // Get the 6 most recent articles
 
         // Parse content safely
