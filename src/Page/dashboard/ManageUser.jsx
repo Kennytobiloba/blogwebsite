@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Modal from './Modal';
+import { Pagination } from "@mui/material";
 
 
 const ManageUser = () => {
@@ -15,36 +16,53 @@ const ManageUser = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [is_locked, setIs_locked] = useState("")
+  const [pagination, setPagination] = useState();
+  const [filters, setFilters] = useState({
+    page:1,
+    is_locked:"",
+    perPage:10
+  })
+  
+  // console.log("locked", pagination)
  
+  const {page, is_locked , perPage} = filters
+  // console.log("page", perPage)
 
-  useEffect(() => {
-    if (user) {
-      getUser();
-    } else {
-      window.location.href = "/login";
-    }
-  }, [user]);
 
   const getUser = async () => {
     try {
+    
       setLoading(true);
       setError(null);
+      const {page, is_locked, perPage} = filters
+      let url = `https://abiodun.techtrovelab.com/api/users?page=${page}`;
+
+      if (is_locked) url += `&is_locked=${is_locked}`;
+      if (perPage) url += `&perPage=${perPage}`;
+      
       const cleanToken = token.replace(/^"|"$/g, "");
-      const response = await fetch("https://abiodun.techtrovelab.com/api/users", {
+      const response = await fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cleanToken}`,
         },
       });
+      const data = await response.json();
+      // console.log(data, "data")
+      if(response.ok){
+        setUsers(data.data || [])
+        setPagination(data.pagination);
+      }
 
       if (response.status === 401) {
         setError("Unauthorized. Please log in again.");
         return;
       }
 
-      const data = await response.json();
-      setUsers(data.data || []);
+      
+    
     } catch (error) {
       setError("Failed to fetch users. Please try again.");
       console.error("Error fetching users:", error);
@@ -52,6 +70,22 @@ const ManageUser = () => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if (user) {
+      getUser();
+    } else {
+      window.location.href = "/login";
+    }
+  }, [filters]);
+  //  filter onchange 
+  const handleFilterChange = (e) => {
+  const {name, value} = e.target
+  setFilters({
+    ...filters,
+    [name]:value
+  })
+    
+  }
 
   const handleDelete = async (id) => {
     const userId = id.replace(/^"|"$/g, "");
@@ -136,6 +170,10 @@ const ManageUser = () => {
     setIsModalOpen(false);
     
   };
+
+  const handlePageChange = (event, page) => {
+    setFilters((prev) => ({ ...prev, page })); // Update filters with the new page
+  }
   return (
     <>
       {loading ? (
@@ -148,6 +186,29 @@ const ManageUser = () => {
         <section className="py-1 bg-blueGray-50">
           <div className="w-full mb-12 xl:mb-0 px-4 mx-auto mt-24">
             <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6  rounded">
+                 <div className=' flex justify-end gap-6'>
+                <select
+                className="border rounded p-2"
+                name="is_locked"
+                value={is_locked}
+                onChange={handleFilterChange}
+              >
+                <option value="">All status</option>
+                <option value={0}>Active</option>
+                <option value={1}>Locked</option>
+              </select>
+              {/* <select
+                className="border rounded p-2"
+                name="perPage"
+                value={perPage}
+                onChange={handleFilterChange}
+              >
+                <option value={5}>5 per page</option>
+                <option value={10}>10 per page</option>
+                <option value={20}>20 per page</option>
+              </select> */}
+               <Link to="/profile" className='px-4 bg-blue-500 py-2 text-white border rounded-md'>Add user</Link>
+                 </div>
               <div className="rounded-t mb-0 px-4 py-3 border-0">
                 <div className="flex flex-wrap items-center">
                   <div className="relative w-full px-4 max-w-full flex-grow flex-1">
@@ -219,6 +280,14 @@ const ManageUser = () => {
                     )}
                   </tbody>
                 </table>
+                <Pagination
+            count={pagination?.totalPages || 2}
+            page={pagination?.currentPage || 1}
+            onChange={handlePageChange}
+            variant="outlined"
+            color="primary"
+            style={{ marginTop: "20px" }}
+            />
               </div>
             </div>
           </div>

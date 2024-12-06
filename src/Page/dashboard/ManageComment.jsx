@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Modal from "./Modal";
+import CommentFliter from "./CommentFliter";
+import { Pagination } from "@mui/material";
 
 
 const ManageBlog = () => {
@@ -15,16 +17,36 @@ const ManageBlog = () => {
   const [loading, setLoading] = useState(true); // State to manage loading
   const { user, token } = useSelector((state) => state.auth); // Get user and token from Redux store
   const [users, setUsers] = useState([]); // State to hold users (if needed)
+  const [pagination, setPagination] = useState();
+  
+  const [filters, setFilters] = useState({
+    from: "",
+    to: "",
+    status: "",
+    search:"",
+    page: 1,
+    perPage: 10,
+    sort: "asc",
+    
+    
+  });
 
-  useEffect(() => {
-    getAllArticles(); // Fetch all articles on component mount
-  }, []);
 
   const getAllArticles = async () => {
+    setLoading(true); 
     try {
+      const {  from, to, search, page, perPage, sort,status  } = filters;
+      let url = `https://abiodun.techtrovelab.com/api/comments?perPage=${perPage}&page=${page}`;
+
+      // if (is_approved) url += `&status=${is_approved}`;
+      if (search) url += `&search=${search}`;
+      if (sort) url += `&sort=${sort}`;
+      if (status) url += `&status=${status}`;
+     
+      
+
       const cleanToken = token.replace(/^"|"$/g, ""); // Clean the token
-      const response = await fetch(
-        "https://abiodun.techtrovelab.com/api/comments",
+      const response = await fetch(url,
         {
           method: "GET",
           headers: {
@@ -35,7 +57,11 @@ const ManageBlog = () => {
       );
 
       const data = await response.json();
-      setArticle(data); // Set the fetched articles to state
+       // Set the fetched articles to state
+       if(response.ok){
+        setArticle(data);
+        setPagination(data.pagination);
+       }
 
       if (response.status === 401) {
         alert("Unauthorized. Please log in again.");
@@ -50,7 +76,12 @@ const ManageBlog = () => {
       setLoading(false); // Set loading to false once the data is fetched
     }
   };
+    useEffect(() => {
+    getAllArticles(); // Fetch all articles on component mount
+  }, [filters]);
 
+
+  
   const handleDelete = async (id) => {
     try {
       const cleanToken = token.replace(/^"|"$/g, "");
@@ -119,7 +150,10 @@ const ManageBlog = () => {
     setSelectUser(null);
     setIsModalOpen(false);
   };
-
+  const handlePageChange = (event, page) => {
+    setFilters((prev) => ({ ...prev, page })); // Update filters with the new page
+  }
+    
   
 
   return (
@@ -127,11 +161,14 @@ const ManageBlog = () => {
       <section className="py-1 bg-blueGray-50 w-full">
         <div className="w-full mb-12 xl:mb-0 px-4 mx-auto mt-24">
           <div className="relative flex flex-col break-words w-full mb-6 shadow-lg rounded">
+            <CommentFliter 
+            setFilters={setFilters}
+             filters={filters}/>
             <div className="rounded-t mb-0 px-4 py-3 border-0">
               <div className="flex flex-wrap items-center">
                 <div className="relative w-full px-4 max-w-full flex-grow flex-1">
                   <h3 className="font-semibold text-base text-blueGray-700">
-                    All Blogs
+                    All Comments
                   </h3>
                 </div>
               </div>
@@ -224,6 +261,14 @@ const ManageBlog = () => {
                   </tbody>
                 </table>
               )}
+             <Pagination
+            count={pagination?.totalPages || 2}
+            page={pagination?.currentPage || 1}
+            onChange={handlePageChange}
+            variant="outlined"
+            color="primary"
+            style={{ marginTop: "20px" }}
+      />
             </div>
           </div>
         </div>
@@ -236,7 +281,7 @@ const ManageBlog = () => {
             onRoleUpdate={handleRoleUpdate}
             valueone="approve"
             valuetwo="decline"
-            valuethree="pending"
+            
           />
         )}
         

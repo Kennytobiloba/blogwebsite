@@ -17,6 +17,7 @@ import AdminUserUpdate from "../Page/dashboard/AdminUserUpdate";
 import SingleBlog from "../components/SingleBlog";
 import AllBlogPage from "../Page/AllBlogPage"
 import ManageComment from "../Page/dashboard/ManageComment";
+import ForgetPassword from "../Page/ForgetPassword";
 
 
 
@@ -46,6 +47,10 @@ import ManageComment from "../Page/dashboard/ManageComment";
       {
         path:"/profile",
         element:<Profile/>
+      },
+      {
+        path:"/forgotpassword",
+        element:<ForgetPassword/>
       },
       {
         path:"/allblogs",

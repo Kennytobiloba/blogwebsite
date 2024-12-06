@@ -1,8 +1,8 @@
 import React from "react";
 
-const Filter = ({ filters, setFilters }) => {
-  const { status, from, to, search, page, perPage, sort } = filters;
-  // console.log(search, sort, perPage, status ,"findfliter")
+const CommentFliter = ({ filters, setFilters }) => {
+  const { search, sort, perPage, status } = filters;
+  console.log(search, sort, perPage, status,"findfliter")
 
   // Handle input changes
   const handleChange = (e) => {
@@ -49,9 +49,19 @@ const Filter = ({ filters, setFilters }) => {
       </select>
 
       {/* Status Dropdown */}
-     
+      <select
+        className="border rounded p-2"
+        name="status"
+        value={status}
+        onChange={handleChange}
+      >
+        <option value="">All Status</option>
+        <option value="approved">Approved</option>
+        <option value="declined">Deline</option>
+        <option value="pending">Pending</option>
+      </select>
     </div>
   );
 };
 
-export default Filter;
+export default CommentFliter;

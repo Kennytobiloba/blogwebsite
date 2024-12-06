@@ -4,6 +4,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { Link } from "react-router-dom";
+
 
 const Profile = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -55,7 +57,7 @@ const Profile = () => {
       }
 
       const data = await response.json();
-      if (data) {
+      if (response.ok) {
         setFormData({
           first_name: data.data.user.first_name || "",
           last_name: data.data.user.last_name || "",
@@ -274,6 +276,11 @@ const Profile = () => {
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
+            </div>
+                <div className="mt-4 text-center">
+              <Link to="/forgotpassword" className="text-blue-600 hover:underline">
+                Forgot your password?
+              </Link>
             </div>
             <button
               type="submit"

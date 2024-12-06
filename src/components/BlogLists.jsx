@@ -2,29 +2,17 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import Filter from "../components/Filter";
 
-const BlogLists = ({ article, loading, pagination }) => {
-  // console.log("Received articles p:", pagination);
-
-  // Check if 'article' exists and extract array if nested
+const BlogLists = ({ article, loading, pagination , filters,  setFilters }) => {
+  
   const articles =
     article?.data && Array.isArray(article.data) ? article.data : Array.isArray(article) ? article : [];
+    
+    const handlePageChange = (event, page) => {
+      setFilters((prev) => ({ ...prev, page })); // Update filters with the new page
+    }
 
-  // Pagination state
-  const [page, setPage] = useState(pagination?.currentPage || 1);
-
-  // Use pagination.perPage for dynamic number of articles per page
-  const articlesPerPage = pagination?.perPage || 6; // Default to 6 if not provided
-
-  // Calculate the current articles to display based on the page
-  const indexOfLastArticle = page * articlesPerPage;
-  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
-  const currentArticles = articles.slice(indexOfFirstArticle, indexOfLastArticle);
-
-  // Handle page change
-  const handlePageChange = (event, value) => {
-    setPage(value);
-  };
 
   if (loading) {
     return (
@@ -40,8 +28,9 @@ const BlogLists = ({ article, loading, pagination }) => {
   return (
     <div className="w-full py-10">
       <div className="w-full mx-auto">
+        <Filter filters={filters} setFilters={setFilters}/>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {currentArticles.map((item, index) => {
+          {articles.map((item, index) => {
             // Ensure the thumbnail is available and use the first item in the array
             const thumbnailUrl =
               item.thumbnail && item.thumbnail.length > 0
@@ -80,13 +69,15 @@ const BlogLists = ({ article, loading, pagination }) => {
         {/* Pagination */}
         <div className="flex justify-center mt-8">
           <Stack spacing={2}>
-            <Pagination
-              count={pagination?.totalPages || 1} // Total pages from pagination prop
-              page={page}
-              onChange={handlePageChange}
-              variant="outlined"
-              color="primary"
+          <Pagination
+            count={pagination?.totalPages || 2}
+            page={pagination?.currentPage || 1}
+            onChange={handlePageChange}
+            variant="outlined"
+            color="primary"
+            style={{ marginTop: "20px" }}
             />
+            
           </Stack>
         </div>
       </div>

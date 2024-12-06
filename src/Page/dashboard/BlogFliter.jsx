@@ -1,8 +1,8 @@
 import React from "react";
 
 const BlogFilter = ({ filters, setFilters }) => {
-  const { search, sort, perPage, status } = filters;
-  console.log(search, sort, perPage, status ,"findfliter")
+  const { status, from, to, search, page, perPage, sort } = filters;
+  // console.log(search, sort, perPage, status ,"findfliter")
 
   // Handle input changes
   const handleChange = (e) => {
