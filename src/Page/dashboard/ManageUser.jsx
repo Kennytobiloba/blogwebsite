@@ -211,7 +211,9 @@ const ManageUser = () => {
               </div>
               <div className="block w-full overflow-x-auto">
                 <table className="items-center bg-transparent w-full border-collapse">
-                  <thead>
+                 {
+                  users.length > 0 && (
+                    <thead>
                     <tr>
                       <th>No.</th>
                       <th>First Name</th>
@@ -224,6 +226,8 @@ const ManageUser = () => {
                       <th>Delete</th>
                     </tr>
                   </thead>
+                  )
+                 }
                   <tbody>
                     {users?.length === 0 ? (
                       <tr>
