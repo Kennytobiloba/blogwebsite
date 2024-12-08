@@ -14,13 +14,14 @@ const CreateBlog = () => {
 
   const editorRef = useRef(null);
   const [title, setTitle] = useState("");
-  const [image_file, setImageFiles] = useState([]); 
+  const [imageFiles, setImageFiles] = useState([]);
   const [status, setStatus] = useState("draft");
   const [content, setContent] = useState("");
   const [uuid, setUuid] = useState(user.data.uuid);
   const [is_commentable, setIsCommentable] = useState(0);
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
 
+  // Initialize the Editor.js
   useEffect(() => {
     const editor = new EditorJS({
       holder: "editorjs",
@@ -52,23 +53,27 @@ const CreateBlog = () => {
     };
   }, []);
 
+  // Handle image upload
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    setImageFiles(files);
+    setImageFiles((prevFiles) => [...prevFiles, ...files]); // Append new files to existing files
   };
 
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
-    image_file.forEach((file) => formData.append("image_file[]", file));
+
+    // Append each image with unique name in form data
+    imageFiles.forEach((file, index) => formData.append(`image_file[${index}]`, file));
+
     formData.append("title", title);
-    formData.append("uuid", uuid);
     formData.append("status", status);
     formData.append("is_commentable", is_commentable);
     formData.append("content", JSON.stringify(content));
 
     const sendData = async () => {
-      setLoading(true); // Show spinner
+      setLoading(true);
       try {
         const cleanToken = token.replace(/^"|"$/g, "");
         const response = await fetch(
@@ -83,6 +88,7 @@ const CreateBlog = () => {
         );
 
         const data = await response.json();
+        console.log("data", data);
 
         if (response.status === 401) {
           alert("Unauthorized. Please log in again.");
@@ -101,17 +107,26 @@ const CreateBlog = () => {
       } catch (error) {
         console.error("Error sending data:", error);
       } finally {
-        setLoading(false); // Hide spinner
+        setLoading(false);
       }
     };
 
     sendData();
   };
 
+  // Revoke image object URLs to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      imageFiles.forEach((file) => URL.revokeObjectURL(file.preview));
+    };
+  }, [imageFiles]);
+
   return (
     <div className="bg-white p-2 md:p-8 mt-20">
       <h2 className="text-2xl font-semibold">Create A New Blog Post</h2>
+
       <form onSubmit={handleSubmit} className="space-y-5 pt-8">
+        {/* Blog Title */}
         <div className="space-y-4">
           <label className="font-semibold text-xl">Blog Title:</label>
           <input
@@ -123,12 +138,16 @@ const CreateBlog = () => {
             required
           />
         </div>
+
         <div className="flex flex-col md:flex-row justify-between items-start">
+          {/* Blog Content */}
           <div className="md:w-2/3 w-full">
             <p className="font-semibold text-xl mb-5">Content Section</p>
             <div id="editorjs" className="border p-4"></div>
           </div>
+
           <div className="md:w-1/3 w-full border p-5 space-y-5">
+            {/* Image Upload */}
             <label className="font-semibold">Blog Cover Images:</label>
             <input
               onChange={handleImageChange}
@@ -137,6 +156,21 @@ const CreateBlog = () => {
               accept="image/*"
               multiple
             />
+
+            {/* Image Preview */}
+            <div className="mt-4 flex flex-wrap gap-4">
+              {imageFiles.map((file, index) => (
+                <div key={index} className="w-20 h-20 relative">
+                  <img
+                    src={URL.createObjectURL(file)} 
+                    alt={`Preview ${index}`}
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Blog Status */}
             <label className="font-semibold">Status:</label>
             <select
               value={status}
@@ -148,10 +182,10 @@ const CreateBlog = () => {
             </select>
           </div>
         </div>
+
+        {/* Submit Button */}
         <button
-          className={`w-full mt-5 bg-indigo-600 text-white py-3 rounded-md ${
-            loading ? "opacity-50 cursor-not-allowed" : "hover:bg-indigo-500"
-          }`}
+          className={`w-full mt-5 bg-indigo-600 text-white py-3 rounded-md ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-indigo-500"}`}
           type="submit"
           disabled={loading}
         >
@@ -184,6 +218,7 @@ const CreateBlog = () => {
           )}
         </button>
       </form>
+
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );

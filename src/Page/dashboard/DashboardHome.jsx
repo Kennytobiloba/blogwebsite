@@ -128,7 +128,7 @@ const DashboardHome = () => {
   );
 
   return (
-    <div className="w-full h-full px-4 md:px-8 mt-20">
+    <div className="w-full h-full px-4 md:px-8 mt-28">
       <div className="space-y-6">
         {/* Welcome Section */}
         <div className="bg-blue-50 p-6 rounded-lg shadow-sm">

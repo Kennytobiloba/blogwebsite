@@ -19,6 +19,8 @@ import AllBlogPage from "../Page/AllBlogPage"
 import ManageComment from "../Page/dashboard/ManageComment";
 import ResetPassword from "../Page/ResetPassword";
 import Forgetpassword from "../Page/dashboard/Forgetpassword";
+import PrivateRoute from "./PrivateRoute";
+
 
 
 
@@ -67,7 +69,7 @@ import Forgetpassword from "../Page/dashboard/Forgetpassword";
       },
       {
         path:"/dashboard",
-        element:<Dashboard/>,
+        element:<PrivateRoute> <Dashboard/> </PrivateRoute>,
         children:[
           {
             path: "",

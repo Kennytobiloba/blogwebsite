@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 
 const Modal = ({ user, onClose, onRoleUpdate, valueone, valuetwo, title, }) => {
+  console.log("value" , valuetwo)
  
   const [role, setRole] = useState(user?.status)
-  // console.log("role", )
-  console.log("role one",  role)
-  // console.log(valuetwo, "valueone")
+  console.log("role", role )
+  // console.log("role one",  role)
+  // console.log(valuetwo,valueone, "valueone")
       
   const userId = user?.uuid?.replace(/^"|"$/g, "") || "";
 

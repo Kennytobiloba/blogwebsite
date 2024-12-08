@@ -40,11 +40,17 @@ const AllBlogPage = () => {
       });
 
       const data = await response.json();
+      console.log("datass", data)
+      const pubslishedarticle = data.data.filter((article) => article.status === "draft" )
+      console.log("datass ppp", pubslishedarticle)
 
       if (response.ok) {
         const sortedArticles = data.data
           .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
           .slice(0, 10);
+
+        //  console.log(sortedArticles ,"sorted")
+        
         setArticle(sortedArticles);
         setPagination(data.pagination);
       } else {

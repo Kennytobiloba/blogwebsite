@@ -22,9 +22,10 @@ const EditBlog = () => {
   const [uuid, setUuid] = useState(user.uuid);
   const [is_commentable, setIsCommentable] = useState(0);
   const [loading, setLoading] = useState(true); // For initial data load
-   const [article, setArticle] = useState()
-   console.log("article", article)
-
+  const [isSubmitting, setIsSubmitting] = useState(false); // For submit button spinner
+  const [article, setArticle] = useState();
+  
+  // console.log("Article Data:", article);
 
   // Fetch the blog data by ID
   useEffect(() => {
@@ -37,19 +38,18 @@ const EditBlog = () => {
           `https://abiodun.techtrovelab.com/api/articles/${uuid}`,
           {
             headers: {
+              
               Authorization: `Bearer ${cleanToken}`,
             },
           }
         );
         const data = await response.json();
-        setArticle(data);
-        const filter = article.data.filter((article)=> article.uuid === id)
-        console.log("filterd data", filter)
-        setTitle(filter?.[0].title);
-        setStatus(filter?.[0].status);
-        setIsCommentable(filter.is_commentable);
-        setContent(filter?.[0].content);
-        // setCurrentImage(filter?.[0].image); 
+        
+        setArticle(data.data);
+        setTitle(data.data.title);
+        setStatus(data.data.status);
+        setIsCommentable(data.data.is_commentable);
+        setContent(data.data.content);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching blog data:", error);
@@ -105,39 +105,52 @@ const EditBlog = () => {
   // Update post request
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsSubmitting(true); // Show spinner on submit button
+
+  
     const formData = new FormData();
-    image_file.forEach((file) => formData.append("images", file));
+    formData.append("_method", "PUT")
+    image_file.forEach((file) => formData.append("image_file[]", file));
     formData.append("title", title);
-    formData.append("uuid", uuid);
     formData.append("status", status);
     formData.append("is_commentable", is_commentable);
     formData.append("content", JSON.stringify(content));
+  
 
-    const updateBlog = async () => {
+    const updateBlog = async () => { 
+    
+     
       try {
         const cleanToken = token.replace(/^"|"$/g, "");
+        const uuid = id.replace(/^"|"$/g, "");
+        console.log("uuid", uuid)
+      
+        
         const response = await fetch(
-          `https://abiodun.techtrovelab.com/api/admin/articles/${id}`,
+          `https://abiodun.techtrovelab.com/api/admin/articles/${uuid}`,
           {
-            method: "PUT",
+            method: "POST",
             body: formData,
             headers: {
               Authorization: `Bearer ${cleanToken}`,
             },
           }
         );
-         const data = response.json()
-         console.log(data, "data")
+
+        const data = await response.json();
+        console.log("Response Data:", data);
 
         if (response.ok) {
           alert("Blog updated successfully!");
           navigate("/dashboard"); // Redirect after success
         } else {
-          const errorData = await response.json();
-          alert("Error: " + errorData.message);
+          alert("Error: " + data.message);
         }
       } catch (error) {
         console.error("Error updating blog:", error);
+        alert("An error occurred while updating the blog.");
+      } finally {
+        setIsSubmitting(false); // Hide spinner on submit button
       }
     };
 
@@ -163,6 +176,7 @@ const EditBlog = () => {
             required
           />
         </div>
+        
         <div className="flex flex-col md:flex-row justify-between items-start">
           <div className="md:w-2/3 w-full">
             <p className="font-semibold text-xl mb-5">Content Section</p>
@@ -180,12 +194,11 @@ const EditBlog = () => {
                 accept="image/*"
                 multiple
               />
-             
               <div className="space-y-4">
                 <label className="font-semibold">Status:</label>
                 <select
                   value={status}
-                  onChange={(e) => setStatus(e.target.value)} // Handle dropdown change
+                  onChange={(e) => setStatus(e.target.value)}
                   className="w-full inline-block bg-gray-100 focus:outline-none px-5 py-3"
                   required
                 >
@@ -196,11 +209,38 @@ const EditBlog = () => {
             </div>
           </div>
         </div>
+
         <button
-          className="w-full mt-5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-md"
+          className={`w-full mt-5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-md flex items-center justify-center ${
+            isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+          }`}
           type="submit"
+          disabled={isSubmitting}
         >
-          Update Blog
+          {isSubmitting ? (
+            <svg
+              className="animate-spin h-5 w-5 mr-3 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C3.58 0 0 3.58 0 8h4z"
+              ></path>
+            </svg>
+          ) : (
+            "Update Blog"
+          )}
         </button>
       </form>
     </div>

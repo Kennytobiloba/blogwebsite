@@ -60,8 +60,8 @@ const TopStory = () => {
 
   return (
     <div className="w-[90%] mx-auto mt-10 font-poppins">
-      <h4 className="text-lg text-center">Top of the story</h4>
-      <h1 className="text-4xl font-bold text-center mt-2">The Utimate Wrestling and charity Oranization</h1>
+      <h4 className="md:text-lg text-[20px] text-center w-full">Top of the story</h4>
+      <h1 className="lg:text-4xl md:text-2xl text-lg font-bold text-center mt-2">The Utimate Wrestling and charity Oranization</h1>
 
       {article ? (
         <Blogs article={article} />

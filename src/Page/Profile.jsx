@@ -6,7 +6,6 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 
-
 const Profile = () => {
   const { user, token } = useSelector((state) => state.auth);
 
@@ -20,9 +19,11 @@ const Profile = () => {
     description: "",
     gender: "",
     email: "",
+    image:"",
   });
-
-  const [profile_img, setProfileImage] = useState(null);
+  // comsole.log("image", formData.image)
+  // console.log("image", formData.image, formData)
+  const [profileImage, setProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fileInputKey, setFileInputKey] = useState(Date.now());
@@ -32,8 +33,7 @@ const Profile = () => {
     getUser();
   }, []);
 
-  const id = user.data.uuid;
-  const userId = id.replace(/^"|"$/g, "");
+  const userId = user.data.uuid.replace(/^"|"$/g, "");
 
   const getUser = async () => {
     try {
@@ -51,23 +51,22 @@ const Profile = () => {
         }
       );
 
-      if (response.status === 401) {
-        setError("Unauthorized. Please log in again.");
-        return;
+      if (!response.ok) {
+        throw new Error("Failed to fetch user data.");
       }
 
       const data = await response.json();
-      if (response.ok) {
-        setFormData({
-          first_name: data.data.user.first_name || "",
-          last_name: data.data.user.last_name || "",
-          description: data.data.user.description || "",
-          email: data.data.user.email || "",
-          gender: data.data.user.gender || "",
-        });
-      }
-    } catch (error) {
-      setError("Failed to fetch user. Please try again.");
+      console.log("user data", data)
+      setFormData({
+        first_name: data.data.user.first_name || "",
+        last_name: data.data.user.last_name || "",
+        description: data.data.user.description || "",
+        email: data.data.user.email || "",
+        gender: data.data.user.gender || "",
+        image: data.data.user.profile_img || "",
+      });
+    } catch (err) {
+      setError(err.message || "An error occurred while fetching user data.");
     } finally {
       setLoading(false);
     }
@@ -80,16 +79,16 @@ const Profile = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setProfileImage(file);
-    setIsImageSelected(true);
-    setFileInputKey(Date.now());
+    if (file) {
+      setProfileImage(file);
+      setIsImageSelected(true);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!formData.first_name || !formData.last_name || !formData.description) {
-      setError("Please fill in all the required fields.");
+      setError("Please fill in all required fields.");
       return;
     }
 
@@ -106,22 +105,21 @@ const Profile = () => {
           body: JSON.stringify(formData),
         }
       );
+
       const data = await response.json();
       if (response.ok) {
         toast.success("Profile updated successfully!");
         window.location.href = "/dashboard";
       } else {
-        setError(data.message || "Failed to update profile.");
-        toast.error(data.message || "Failed to update profile.");
+        throw new Error(data.message || "Failed to update profile.");
       }
-    } catch (error) {
-      setError("An error occurred while updating the profile.");
-      toast.error("An error occurred while updating the profile.");
+    } catch (err) {
+      toast.error(err.message || "An error occurred while updating the profile.");
     }
   };
 
   const uploadProfileImage = async () => {
-    if (!profile_img) {
+    if (!profileImage) {
       toast.error("No image selected.");
       return;
     }
@@ -129,7 +127,7 @@ const Profile = () => {
     try {
       const cleanToken = token.replace(/^"|"$/g, "");
       const formData = new FormData();
-      formData.append("profile_image", profile_img);
+      formData.append("profile_img", profileImage);
 
       const response = await fetch(
         `https://abiodun.techtrovelab.com/api/users/profile/${userId}`,
@@ -143,17 +141,21 @@ const Profile = () => {
       );
 
       const data = await response.json();
-      console.log("data", data)
       if (response.ok) {
         toast.success("Image uploaded successfully!");
         setIsImageSelected(false);
+        setFileInputKey(Date.now()); // Reset the file input
       } else {
         throw new Error(data.message || "Failed to upload image.");
       }
-    } catch (error) {
-      toast.error("Error uploading image. Please try again.");
+    } catch (err) {
+      toast.error(err.message || "Error uploading image.");
     }
   };
+  const thumbnailUrl =
+  formData.image ? `https://abiodun.techtrovelab.com${formData.image}` : "https://via.placeholder.com/600";
+
+ 
 
   return (
     <>
@@ -171,9 +173,9 @@ const Profile = () => {
             <div className="w-40 h-40 rounded-full border-4 border-gray-300 flex items-center justify-center overflow-hidden">
               <img
                 src={
-                  profile_img
-                    ? URL.createObjectURL(profile_img)
-                    : "/default-avatar.png"
+                  profileImage
+                    ? URL.createObjectURL(profileImage)
+                    : thumbnailUrl
                 }
                 alt="Profile"
                 className="w-full h-full object-cover"
@@ -184,7 +186,7 @@ const Profile = () => {
                 htmlFor="profile_img"
                 className="px-6 py-2 bg-blue-600 text-white rounded-md shadow-md cursor-pointer hover:bg-blue-700"
               >
-                {isImageSelected ? "Save Image" : "Change Profile Image"}
+                {isImageSelected ? "Change Profile Image" : "Change Profile Image"}
               </label>
               <input
                 type="file"
@@ -277,7 +279,7 @@ const Profile = () => {
                 <option value="female">Female</option>
               </select>
             </div>
-                <div className="mt-4 text-center">
+            <div className="mt-4 text-center">
               <Link to="/Resetpassword" className="text-blue-600 hover:underline">
                 Reset your password?
               </Link>

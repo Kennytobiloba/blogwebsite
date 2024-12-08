@@ -15,22 +15,22 @@ const About = () => {
 
       {/* Text Section */}
       <div className="w-full md:w-1/2 text-center md:text-start mt-8">
-        <h2 className="text-lg sm:text-md md:text-xl font-semibold text-gray-800 mb-2">
+        <h2 className="text-lg  md:text-xl font-semibold text-gray-800 mb-2">
           The Ultimate Wrestling and Charity Organization - TUWCO
         </h2>
-        <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl mb-4">
+        <h1 className="font-bold text-[20px] sm:text-3xl md:text-4xl mb-4 hidden lg:block ">
           Championing Legends and Empowering Communities
         </h1>
-        <h3 className="text-gray-800 font-medium mb-4 text-md sm:text-lg">
+        <h3 className="text-gray-800 font-medium mb-4 text-md sm:text-lg  hidden lg:block">
           A Legacy of Giving and Empowerment:
         </h3>
-        <h3 className="text-gray-800 font-medium mb-4 text-md sm:text-lg">
+        <h3 className="text-gray-800 font-medium mb-4 text-md sm:text-lg   hidden lg:block">
           Honoring Legends through Charity and Wrestling Excellence
         </h3>
         <h3 className="text-gray-800 font-medium mb-4 text-md sm:text-lg">
           Bringing Change through Unity and Strength
         </h3>
-        <p className="text-sm sm:text-md md:text-lg text-gray-600 mb-6">
+        <p className="text-sm sm:text-md md:text-lg text-gray-600 mb-6 lg:text-start text-justify leading-[22px]">
           TUWCO is not just about wrestling, it’s about making a meaningful impact on the lives of people. We are dedicated to empowering communities by discovering raw talents and helping them reach their fullest potential. By providing access to international platforms and infrastructure, we aim to uplift local talents and celebrate their greatness. Alongside this, we focus on humanitarian efforts, such as providing homes for the homeless, bringing essential amenities to underserved rural areas, and creating sustainable infrastructure that connects rural and urban communities.
         </p>
 

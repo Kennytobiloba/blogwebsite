@@ -61,7 +61,7 @@ const ManageBlog = () => {
       });
   
       const data = await response.json();
-      console.log("data", )
+      console.log("data blog", data )
   
       if (response.ok) {
         setArticle(data);
@@ -354,7 +354,7 @@ const ManageBlog = () => {
             onClose={closeModal}
             onRoleUpdate={handleRoleUpdate}
             valueone={"draft"}
-            valuetwo={"publish"}
+            valuetwo={"published"}
             
           />
         )}

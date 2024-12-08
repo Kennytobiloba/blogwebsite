@@ -279,8 +279,8 @@ const ManageBlog = () => {
             user={selectUser}
             onClose={closeModal}
             onRoleUpdate={handleRoleUpdate}
-            valueone="approve"
-            valuetwo="decline"
+            valueone="approved"
+            valuetwo="declined"
             
           />
         )}

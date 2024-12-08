@@ -10,17 +10,17 @@ import {
   BsBoxArrowInRight,
   BsSearch,
 } from "react-icons/bs";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet ,  useNavigate } from "react-router-dom";
 import { logOut } from "../redux/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-
-
 const Dashboard = () => {
+  // Get user and token from Redux store
   const { user, token } = useSelector((state) => state.auth);
-   const dispatch = useDispatch()
-   console.log(user, "user")
-   
+  const dispatch = useDispatch();
+  
+  console.log(user, "user");
+  
   const [sidebarVisible, setSidebarVisible] = useState(false); // To toggle sidebar visibility
   const [dropdownVisible, setDropdownVisible] = useState(false); // To toggle dropdown menu
 
@@ -34,17 +34,20 @@ const Dashboard = () => {
     setDropdownVisible(!dropdownVisible);
   };
 
-   const closeToggle = () => {
+  const closeToggle = () => {
     setDropdownVisible(false);
     setSidebarVisible(false);
-   }
-//  log out fuction
- const logOutUser = () => {
-   dispatch(logOut())
-   window.location.href = "/";
- }
+  };
+
+  // Log out function
+  const logOutUser = () => {
+    dispatch(logOut());
+    navigate("/"); 
+  };
+;
+
   return (
-    <div className="flex min-h-screen w-full overflow-x-">
+    <div className="flex min-h-screen w-full">
       {/* Sidebar Toggle Icon (Always Visible) */}
       <span
         className="fixed text-white text-4xl top-5 left-4 cursor-pointer lg:hidden z-50"
@@ -60,7 +63,7 @@ const Dashboard = () => {
         } lg:block`}
       >
         <div
-          className={`sidebar fixed top-0 bottom-0 lg:relative p-2 z-40 overflow-y-auto text-center bg-gray-900`}
+          className={`sidebar fixed top-0 bottom-0  p-2 z-40 overflow-y-auto text-center bg-gray-900`}
         >
           <div className="text-gray-100 text-xl">
             <div className="p-2.5 mt-1 flex items-center">
@@ -76,65 +79,67 @@ const Dashboard = () => {
             <div className="my-2 bg-gray-600 h-[1px]" />
           </div>
 
-          {/* Search box */}
-         
-
           {/* Menu items */}
           <div 
-          onClick={closeToggle}
-          className="p-2.5 flex  mt-20 items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+            onClick={closeToggle}
+            className="p-2.5 flex mt-20 items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white"
+          >
             <BsHouseDoorFill />
             <Link to="/dashboard" className="text-[15px] ml-4 text-gray-200 font-bold">Home</Link>
           </div>
+
           <div 
-           onClick={closeToggle}
-          className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+            onClick={closeToggle}
+            className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white"
+          >
             <BsBookmarkFill />
             <Link to="/dashboard/manageblog" className="text-[15px] ml-4 text-gray-200 font-bold">
               Manage Article
             </Link>
           </div>
+
+          {/* Check for user existence and admin rights before rendering */}
           {
-            user.data.is_admin === true && (
+            user?.data?.is_admin === true && (
               <div
-              onClick={closeToggle}
-              className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
-               <BsBookmarkFill />
-               <Link to="/dashboard/manageuser"  className="text-[15px] ml-4 text-gray-200 font-bold">
-                 Manage User
-               </Link>
-             </div>
+                onClick={closeToggle}
+                className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white"
+              >
+                <BsBookmarkFill />
+                <Link to="/dashboard/manageuser" className="text-[15px] ml-4 text-gray-200 font-bold">
+                  Manage User
+                </Link>
+              </div>
             )
           }
-          
+
           <div
-           onClick={closeToggle}
-           className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+            onClick={closeToggle}
+            className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white"
+          >
             <BsBookmarkFill />
-            <Link to="/dashboard/comment"  className="text-[15px] ml-4 text-gray-200 font-bold">
+            <Link to="/dashboard/comment" className="text-[15px] ml-4 text-gray-200 font-bold">
               Manage Comment
             </Link>
           </div>
+
           <div
-           onClick={closeToggle}
-           className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+            onClick={closeToggle}
+            className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white"
+          >
             <BsBookmarkFill />
-            <Link to="/profile"  className="text-[15px] ml-4 text-gray-200 font-bold">
+            <Link to="/profile" className="text-[15px] ml-4 text-gray-200 font-bold">
               Profile
             </Link>
           </div>
-          
-         
+
           <div className="my-4 bg-gray-600 h-[1px]" />
 
-          {/* Dropdown menu */}
-          
-
-       
-
+          {/* Log out option */}
           <div 
-          onClick={logOutUser}
-          className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+            onClick={logOutUser}
+            className="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white"
+          >
             <BsBoxArrowInRight />
             <span className="text-[15px] ml-4 text-gray-200 font-bold">
               Logout
@@ -144,21 +149,21 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1   max-w-[100%]    overflow-x-scroll lg:overflow-x-hidden">
-      <div className="flex-1 flex flex-col max-w-[100%]">
-        {/* Top Navigation */}
-        <div className="bg-gray-800 text-white p-4 flex justify-end lg:justify-between items-center">
-          <h1 className="text-lg font-bold hidden lg:block ">Dashboard</h1>
-          <Link
-            to="/"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Back to Main Page
-          </Link>
+      <div className="flex-1 max-w-[100%] overflow-x-scroll lg:overflow-x-hidden">
+        <div className="flex-1 flex flex-col max-w-[100%] fixed top-0 left-0 right-0 z-20 mb-10">
+          <div className="bg-gray-800 text-white p-4 flex justify-end lg:justify-between items-center">
+            <h1 className="text-lg font-bold hidden lg:block">Dashboard</h1>
+            <Link
+              to="/"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Back to Main Page
+            </Link>
+          </div>
         </div>
-        </div>
-        
-        <Outlet />
+       <div className="w-full ">
+       <Outlet />
+       </div>
       </div>
     </div>
   );

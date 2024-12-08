@@ -49,8 +49,8 @@ const Hero = () => {
             <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
             <div className="absolute inset-0 flex items-center mt-10 justify-center z-30 text-white p-8">
               <div className="text-center font-roboto">
-                <h1 className="text-lg text-line font-medium mb-2">Welcome to TUWCO</h1>
-                <h1 className="text-4xl text-line font-bold">The Ultimate Wrestling and Charity Organization</h1>
+                <h1 className="md:text-lg text-sm text-line font-medium mb-2">Welcome to TUWCO</h1>
+                <h1 className="lg:text-4xl md:text-2xl text-[20px] text-line font-bold">The Ultimate Wrestling and Charity Organization</h1>
                 <p className="mt-4 text-lg text-line w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mx-auto">
                 We empower individuals by providing basic infrastructure, linking them to international platforms, and helping them grow into global stars. TUWCO is committed to bringing opportunities to those who need them most.
                 </p>
@@ -71,7 +71,7 @@ const Hero = () => {
             <div className="absolute inset-0 flex items-center mt-10 justify-center z-30 text-white p-8">
               <div className="text-center font-roboto">
                 <h1 className="text-lg text-line font-medium mb-2">Welcome to TUWCO</h1>
-                <h1 className="text-4xl text-line font-bold">The Ultimate Wrestling and Charity Organization</h1>
+                <h1 className="lg:text-4xl md:text-2xl text-[20px] text-line font-bold">The Ultimate Wrestling and Charity Organization</h1>
                 <p className="mt-4 text-lg text-line w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mx-auto">
                   TUWCO focuses on uncovering unique talents and nurturing them into world-class celebrities through innovative support and exposure. We aim to create a lasting impact on individuals and communities.
                 </p>
@@ -90,8 +90,8 @@ const Hero = () => {
             <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
             <div className="absolute inset-0 flex items-center mt-10 justify-center z-30 text-white p-8">
               <div className="text-center font-roboto">
-                <h1 className="text-lg text-line font-medium mb-2">Welcome to TUWCO</h1>
-                <h1 className="text-4xl text-line font-bold">The Ultimate Wrestling and Charity Organization</h1>
+                <h1 className="md:text-lg text-sm text-line font-medium mb-2">Welcome to TUWCO</h1>
+                <h1 className="lg:text-4xl md:text-2xl text-[20px] text-line font-bold">The Ultimate Wrestling and Charity Organization</h1>
                 <p className="mt-4 text-lg text-line w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mx-auto">
                 TUWCO promotes unity and empowers communities through charity events. We create world-class opportunities for talents and ensure that everyone has a chance to thrive. Join us in creating a lasting impact through both sport and charity.              
                 </p>
