@@ -70,7 +70,7 @@ const ManageBlog = () => {
         toast.error(data.message || "Failed to fetch articles.");
       }
     } catch (error) {
-      console.error("Error fetching articles:", error);
+      // console.error("Error fetching articles:", error);
       toast.error("An error occurred while fetching articles.");
     } finally {
       setLoading(false); // Stop loading
@@ -278,7 +278,7 @@ const ManageBlog = () => {
                       </tr>
                     ) : (
                       article?.data?.map((blog, index) => (
-                        <tr key={blog.id}>
+                        <tr key={index}>
                           <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700">
                             {index + 1}
                           </th>

@@ -157,7 +157,7 @@ const SingleBlog = () => {
         <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
           <h1 className="lg:text-3xl md:text-2xl font-semibold mb-4">{article?.title}</h1>
 
-          {/* Image Slider using Material UI Slide */}
+          Image Slider using Material UI Slide
           {images.length > 0 && (
             <div className="relative w-full h-64 overflow-hidden">
               {images.map((image, index) => (

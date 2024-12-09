@@ -1,33 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import Blogs from './Blogs';
-
 import { Link } from 'react-router-dom';
-
 
 const Article = () => {
   const [article, setArticle] = useState([]);
-  console.log("find", article)
+  const [loading, setLoading] = useState(true);  // Add loading state
+  const [error, setError] = useState(null);      // Add error state
 
- 
-  
   // Function to safely parse JSON or return the original content if it's not valid JSON
   const safeJsonParse = (content) => {
     try {
       return JSON.parse(content);
     } catch (e) {
-      console.log("Invalid JSON, returning content as text:", content);
+      // console.log("Invalid JSON, returning content as text:", content);
       return content; // Return the original content if it's not valid JSON
     }
   };
 
   // Get all articles function
   const getAllarticle = async () => {
+    setLoading(true);  // Set loading to true when fetching data
     try {
-      
-      
       const response = await fetch("https://abiodun.techtrovelab.com/api/articles", {
         method: "GET",
-       
       });
 
       if (response.status === 401) {
@@ -37,7 +32,7 @@ const Article = () => {
       }
 
       const data = await response.json();
-      console.log("Data fetched: article", data);
+      // console.log("Data fetched: article", data);
 
       // Check if 'data' exists and is an array
       if (data && Array.isArray(data.data)) {
@@ -45,16 +40,19 @@ const Article = () => {
         const updatedArticles = data.data.map(article => {
           return {
             ...article,
-            content: article.content ? safeJsonParse(article.content) : null // Safely parse content
+            content: article.content ? safeJsonParse(article.content) : null, // Safely parse content
           };
         });
         
-        
         setArticle(updatedArticles); // Set the updated articles state
+      } else {
+        setError("Invalid data structure received.");
       }
-
     } catch (error) {
-      console.error("Error fetching articles:", error);
+      // console.error("Error fetching articles:", error);
+      setError("Error fetching articles.");
+    } finally {
+      setLoading(false); // Set loading to false when done
     }
   };
 
@@ -63,8 +61,16 @@ const Article = () => {
   }, []);
 
   useEffect(() => {
-    console.log(article, "article state updated"); // Log whenever the state changes
+    // console.log(article, "article state updated");
   }, [article]);
+
+  if (loading) {
+    return <div>Loading articles...</div>;  // Loading indicator
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;  // Display error message if there's an error
+  }
 
   return (
     <div className="w-full bg-gray-800 text-white font-poppins py-20 px- mt-10">
@@ -87,7 +93,7 @@ const Article = () => {
         {/* Display articles */}
         <div className="mt-10">
           <div>
-            <Blogs article={article}/>
+            <Blogs article={article} />
           </div>
         </div>
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const CommentModal = ({ user, onClose, onRoleUpdate, valueone, valuetwo, title }) => {
   const [comment, setComment] = useState(user?.commentable ? "true" : "false")
-  console.log("comment", user )
+  // console.log("comment", user )
 //   console.log(valueone, "valueone")
 //   console.log(valuetwo, "valueone")
       
@@ -13,7 +13,7 @@ const CommentModal = ({ user, onClose, onRoleUpdate, valueone, valuetwo, title }
      onRoleUpdate(userId, comment)
   
     onClose();
-     console.log("user update", userId, role)
+    //  console.log("user update", userId, role)
   };
 
 

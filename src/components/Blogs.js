@@ -13,10 +13,10 @@ const Blogs = ({ article }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {article.map((item, index) => {
             // Ensure the thumbnail is available and use the first item in the array
-            const thumbnailUrl =
-              item.thumbnail && item.thumbnail.length > 0
-                ? `https://abiodun.techtrovelab.com/${item.thumbnail[0]}`
-                : "https://via.placeholder.com/150"; // Fallback image URL
+            // const thumbnailUrl =
+            //   item.thumbnail && item.thumbnail.length > 0
+            //     ? `https://abiodun.techtrovelab.com/${item.thumbnail[0]}`
+            //     : "https://via.placeholder.com/150"; // Fallback image URL
 
             return (
               <div
@@ -25,11 +25,11 @@ const Blogs = ({ article }) => {
               >
                 <Link to={`/singlePage/${item.uuid}`}>
                   <div className="p-2">
-                    <img
+                    {/* <img
                       src={thumbnailUrl}
                       alt={item.title}
                       className="w-[90%] mx-auto h-48 object-cover rounded-lg shadow-md mb-4"
-                    />
+                    /> */}
                     <h2 className="text-xl font-semibold text-gray-800 text-center">{item.title}</h2>
                   
                     <div className="text-center">

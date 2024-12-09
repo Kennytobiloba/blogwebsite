@@ -21,13 +21,14 @@ const Profile = () => {
     email: "",
     image:"",
   });
-  // comsole.log("image", formData.image)
+  console.log("image", formData.image)
   // console.log("image", formData.image, formData)
   const [profileImage, setProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fileInputKey, setFileInputKey] = useState(Date.now());
   const [isImageSelected, setIsImageSelected] = useState(false);
+  
 
   useEffect(() => {
     getUser();
