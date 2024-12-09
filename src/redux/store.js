@@ -9,5 +9,5 @@ export const store = configureStore({
     auth: authReducer, 
   },
   
-  devTools: process.env.NODE_ENV !== "production", // Enables DevTools only in development mode
+  devTools: process.env.NODE_ENV !== "production", 
 });
