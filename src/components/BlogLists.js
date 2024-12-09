@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import Filter from "../components/Filter";
+import Filter from "./Filter";
 
 const BlogLists = ({ article, loading, pagination , filters,  setFilters }) => {
   

@@ -2,7 +2,7 @@ import {
     createBrowserRouter,  
   } from "react-router-dom";
 
-import Home from "../components/Home";
+
 import App from "../App";
 import Login from "../Page/Login";
 import Register from "../Page/Register";
@@ -22,22 +22,10 @@ import Forgetpassword from "../Page/dashboard/Forgetpassword";
 import PrivateRoute from "./PrivateRoute";
 
 
-
-
-
-
-
    const router = createBrowserRouter([
       {
         path: "/",
-        element:<App/>,
-        children:[
-          {
-            path: "/",
-            element:<Home/>
-          }
-        ]
-        
+        element:<App/>,       
       },
       {
         path:"/login",
