@@ -3,7 +3,6 @@ import EditorJSHTML from 'editorjs-html';
 import { useParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import Comment from './Comment';
-import { useSelector } from 'react-redux';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from './Footer';
@@ -17,25 +16,14 @@ const formatDateTime = (dateTimeString) => {
 };
 
 const SingleBlog = () => {
-  const { id } = useParams(); // Move `useParams` here to avoid potential issues
+  const { id } = useParams(); // Get the article ID from URL
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [name, setName] = useState('');
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState(""); // state for storing parsed content
   const [comments, setComments] = useState([]);
-  const [currentSlide, setCurrentSlide] = useState(0); // State to track the current slide
-
-  console.log(article, "article");
-
-  const safeJsonParse = (content) => {
-    try {
-      return typeof content === 'string' ? JSON.parse(content) : content;
-    } catch (e) {
-      console.log("Invalid JSON, returning content as text:", content);
-      return content;
-    }
-  };
+  const [currentSlide, setCurrentSlide] = useState(0); 
 
   const getArticle = async () => {
     setLoading(true);
@@ -58,13 +46,13 @@ const SingleBlog = () => {
       }
 
       const data = await response.json();
-      console.log(data, "data");
-      if (data?.data?.content) {
-        const updatedContent = safeJsonParse(data?.data?.content);
-        setArticle({ ...data.data, content: updatedContent });
-      } else {
-        setArticle(data?.data);
+      if (data?.data) {
+        setArticle(data.data);
+        // Parse the content JSON string and store in state
+        const parsedContent = data?.data?.content ? JSON.parse(data?.data?.content) : null;  
+        // setContent(parsedContent);
       }
+      
     } catch (error) {
       setError("Failed to fetch article. Please try again.");
       console.error("Error fetching article:", error);
@@ -105,17 +93,29 @@ const SingleBlog = () => {
     }
   }, [id]);
 
+  // Tailwind spinner
+  const spinner = (
+    <div className="flex justify-center items-center">
+      <div className="w-16 h-16 border-4 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
+    </div>
+  );
+
   if (loading) {
-    return <div className="text-center text-xl">Loading...</div>;
+    return (
+      <div className="h-screen flex justify-center items-center">
+        {spinner}
+      </div>
+    );
   }
 
   if (error) {
     return <div className="text-center text-red-500">{error}</div>;
   }
-
+ 
   let htmlContent = "";
-  if (article?.content) {
-    htmlContent = editorJSParser.parse(article.content).join('');
+  // Ensure content is valid before parsing
+  if (content?.blocks) {
+    htmlContent = editorJSParser.parse(content).join('');
   }
 
   const sendData = async () => {
@@ -157,10 +157,9 @@ const SingleBlog = () => {
         <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
           <h1 className="lg:text-3xl md:text-2xl font-semibold mb-4">{article?.title}</h1>
 
-          Image Slider using Material UI Slide
-          {images.length > 0 && (
+          {images?.length > 0 && (
             <div className="relative w-full h-64 overflow-hidden">
-              {images.map((image, index) => (
+              {images?.map((image, index) => (
                 <Slide
                   key={index}
                   direction="left"
@@ -181,7 +180,7 @@ const SingleBlog = () => {
 
           {/* Navigation for the images */}
           <div className="flex justify-center space-x-2 mt-4">
-            {images.map((_, index) => (
+            {images?.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
@@ -195,7 +194,6 @@ const SingleBlog = () => {
             <span className="font-medium">{formatDateTime(article?.updated_at)}</span>
           </p>
 
-          
           <div className="space-y-4">
             <div
               dangerouslySetInnerHTML={{ __html: htmlContent }}

@@ -19,7 +19,7 @@ const Dashboard = () => {
   const { user, token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   
-  console.log(user, "user");
+  // console.log(user, "user");
   
   const [sidebarVisible, setSidebarVisible] = useState(false); // To toggle sidebar visibility
   const [dropdownVisible, setDropdownVisible] = useState(false); // To toggle dropdown menu

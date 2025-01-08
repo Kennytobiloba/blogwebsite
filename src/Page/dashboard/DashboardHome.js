@@ -98,7 +98,7 @@ const DashboardHome = () => {
       });
 
       const data = await response.json();
-      console.log("data", data)
+      // console.log("data", data)
       setComment(data);
       const approved = data.data?.filter((article) => article.status === "approved"); 
       SetApproved(approved)
@@ -132,7 +132,7 @@ const DashboardHome = () => {
       <div className="space-y-6">
         {/* Welcome Section */}
         <div className="bg-blue-50 p-6 rounded-lg shadow-sm">
-          <h1 className="text-2xl font-bold text-blue-700">Hello, {user?.data.first_name}!</h1>
+          <h1 className="text-2xl font-bold text-blue-700">Hello, {user?.data?.first_name}!</h1>
           <p className="text-gray-700 mt-2">
             Welcome to the Unitimate Wrestling and Charity Organization  Dashboard. Stay informed, manage articles, and celebrate the vibrant creativity of Abia State.
           </p>

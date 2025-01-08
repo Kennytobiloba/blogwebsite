@@ -102,7 +102,7 @@ const Navbar = () => {
                   </li>
                   <Link to="" className="flex items-center space-x-2">
                     <FaUserCircle size={20} className="text-white" />
-                    <span className="text-white">{user.data.first_name}</span>
+                    <span className="text-white">{user?.data?.first_name}</span>
                   </Link>
                   <li>
                     <Link onClick={handleLogout} className="block py-2 text-white lg:bg-transparent lg:p-0">Logout</Link>

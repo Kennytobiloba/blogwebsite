@@ -16,7 +16,7 @@ const CreateBlog = () => {
   const [title, setTitle] = useState("");
   const [imageFiles, setImageFiles] = useState([]);
   const [status, setStatus] = useState("draft");
-  const [content, setContent] = useState("");
+  // const [content, setContent] = useState("");
   const [uuid, setUuid] = useState(user.data.uuid);
   const [is_commentable, setIsCommentable] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -39,10 +39,7 @@ const CreateBlog = () => {
           inlineToolbar: true,
         },
       },
-      onChange: async () => {
-        const savedData = await editor.save();
-        setContent(savedData);
-      },
+  
     });
 
     return () => {
@@ -60,18 +57,16 @@ const CreateBlog = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const content = await editorRef.current.save();
     const formData = new FormData();
-
     // Append each image with unique name in form data
     imageFiles.forEach((file, index) => formData.append(`image_file[${index}]`, file));
-
     formData.append("title", title);
     formData.append("status", status);
     formData.append("is_commentable", is_commentable);
     formData.append("content", JSON.stringify(content));
-
     const sendData = async () => {
       setLoading(true);
       try {
@@ -88,7 +83,7 @@ const CreateBlog = () => {
         );
 
         const data = await response.json();
-        console.log("data", data);
+        // console.log("data", data);
 
         if (response.status === 401) {
           alert("Unauthorized. Please log in again.");

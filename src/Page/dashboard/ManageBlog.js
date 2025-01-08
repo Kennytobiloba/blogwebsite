@@ -18,7 +18,6 @@ const ManageBlog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [article, setArticle] = useState([]); // State to hold articles
   const [loading, setLoading] = useState(true); // State to manage loading
-
   const [users, setUsers] = useState([]); // State to hold users (if needed)
   const [pagination, setPagination] = useState();
   // console.log(pagination, "pppp")
@@ -61,7 +60,7 @@ const ManageBlog = () => {
       });
   
       const data = await response.json();
-      console.log("data blog", data )
+      // console.log("data blog", data )
   
       if (response.ok) {
         setArticle(data);

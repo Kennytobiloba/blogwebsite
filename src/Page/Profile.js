@@ -21,7 +21,7 @@ const Profile = () => {
     email: "",
     image:"",
   });
-  console.log("image", formData.image)
+  // console.log("image", formData.image)
   // console.log("image", formData.image, formData)
   const [profileImage, setProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -57,7 +57,7 @@ const Profile = () => {
       }
 
       const data = await response.json();
-      console.log("user data", data)
+      // console.log("user data", data)
       setFormData({
         first_name: data.data.user.first_name || "",
         last_name: data.data.user.last_name || "",

@@ -2,7 +2,7 @@ import React from "react";
 
 const CommentFliter = ({ filters, setFilters }) => {
   const { search, sort, perPage, status } = filters;
-  console.log(search, sort, perPage, status,"findfliter")
+  // console.log(search, sort, perPage, status,"findfliter")
 
   // Handle input changes
   const handleChange = (e) => {

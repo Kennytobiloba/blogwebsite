@@ -2,14 +2,14 @@ import { defineConfig, transformWithEsbuild } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
+  base: '/', 
+
   plugins: [
     {
       name: 'treat-js-files-as-jsx',
       async transform(code, id) {
-        if (!id.match(/src\/.*\.js$/))  return null
+        if (!id.match(/src\/.*\.js$/)) return null
 
-        // Use the exposed transform from vite, instead of directly
-        // transforming with esbuild
         return transformWithEsbuild(code, id, {
           loader: 'jsx',
           jsx: 'automatic',
@@ -28,8 +28,7 @@ export default defineConfig({
     },
   },
 
-  // Add the build configuration with the chunkSizeWarningLimit
   build: {
-    chunkSizeWarningLimit: 1000, // Set the chunk size warning limit to 1000 KB
+    chunkSizeWarningLimit: 1000, 
   },
 })

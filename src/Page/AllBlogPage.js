@@ -40,9 +40,9 @@ const AllBlogPage = () => {
       });
 
       const data = await response.json();
-      console.log("datass", data)
+      // console.log("datass", data)
       const pubslishedarticle = data.data.filter((article) => article.status === "draft" )
-      console.log("datass ppp", pubslishedarticle)
+      // console.log("datass ppp", pubslishedarticle)
 
       if (response.ok) {
         const sortedArticles = data.data

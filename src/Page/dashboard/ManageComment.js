@@ -111,7 +111,7 @@ const ManageBlog = () => {
   };
 
   const handleRoleUpdate = async (id, status) => {
-    console.log(id, status, "comment")
+    // console.log(id, status, "comment")
     try {
       const cleanToken = token.replace(/^"|"$/g, "");
       const response = await fetch(

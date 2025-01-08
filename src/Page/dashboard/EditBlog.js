@@ -4,6 +4,8 @@ import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import { useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EditBlog = () => {
   const { id } = useParams();
@@ -16,16 +18,14 @@ const EditBlog = () => {
 
   const editorRef = useRef(null);
   const [title, setTitle] = useState("");
-  const [image_file, setImageFiles] = useState([]);
+  const [image_file, setImageFiles] = useState([]); // For new images
   const [status, setStatus] = useState("draft");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState();
   const [uuid, setUuid] = useState(user.uuid);
   const [is_commentable, setIsCommentable] = useState(0);
-  const [loading, setLoading] = useState(true); // For initial data load
-  const [isSubmitting, setIsSubmitting] = useState(false); // For submit button spinner
+  const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [article, setArticle] = useState();
-  
-  // console.log("Article Data:", article);
 
   // Fetch the blog data by ID
   useEffect(() => {
@@ -38,7 +38,6 @@ const EditBlog = () => {
           `https://abiodun.techtrovelab.com/api/articles/${uuid}`,
           {
             headers: {
-              
               Authorization: `Bearer ${cleanToken}`,
             },
           }
@@ -48,8 +47,8 @@ const EditBlog = () => {
         setArticle(data.data);
         setTitle(data.data.title);
         setStatus(data.data.status);
-        setIsCommentable(data.data.is_commentable);
         setContent(data.data.content);
+        setImageFiles(data.data.images || []); // Set existing images (if any)
         setLoading(false);
       } catch (error) {
         console.error("Error fetching blog data:", error);
@@ -62,14 +61,13 @@ const EditBlog = () => {
   // Initialize EditorJS
   useEffect(() => {
     if (loading) return;
-
+  
     const editor = new EditorJS({
       holder: "editorjs",
       onReady: () => {
         editorRef.current = editor;
-        if (content) {
-          editor.render(JSON.parse(content)); // Preload existing content
-        }
+        const contentToRender = typeof content === 'string' ? JSON.parse(content) : content;
+        editor.render(contentToRender); // Preload existing content
       },
       autofocus: true,
       tools: {
@@ -82,12 +80,8 @@ const EditBlog = () => {
           inlineToolbar: true,
         },
       },
-      onChange: async () => {
-        const savedData = await editor.save();
-        setContent(savedData); // Save updated content
-      },
     });
-
+  
     return () => {
       if (editorRef.current) {
         editorRef.current.destroy();
@@ -96,36 +90,31 @@ const EditBlog = () => {
     };
   }, [loading, content]);
 
-  // Handle image changes
+  // Handle image changes (new uploads)
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    setImageFiles(files);
+    setImageFiles((prevFiles) => [...prevFiles, ...files]); // Add new images to the state
   };
 
-  // Update post request
-  const handleSubmit = (e) => {
+  // Handle form submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true); // Show spinner on submit button
-
-  
+    const contents = await editorRef.current.save();
+    setIsSubmitting(true);
     const formData = new FormData();
-    formData.append("_method", "PUT")
+
+    // Append old images (if any) and new images
     image_file.forEach((file) => formData.append("image_file[]", file));
+
     formData.append("title", title);
     formData.append("status", status);
     formData.append("is_commentable", is_commentable);
-    formData.append("content", JSON.stringify(content));
-  
+    formData.append("content", JSON.stringify(contents));
 
-    const updateBlog = async () => { 
-    
-     
+    const updateBlog = async () => {
       try {
         const cleanToken = token.replace(/^"|"$/g, "");
         const uuid = id.replace(/^"|"$/g, "");
-        console.log("uuid", uuid)
-      
-        
         const response = await fetch(
           `https://abiodun.techtrovelab.com/api/admin/articles/${uuid}`,
           {
@@ -138,11 +127,13 @@ const EditBlog = () => {
         );
 
         const data = await response.json();
-        console.log("Response Data:", data);
 
         if (response.ok) {
-          alert("Blog updated successfully!");
-          navigate("/dashboard"); // Redirect after success
+          toast.success("Blog Updated successfully!", {
+            position: "top-right",
+            autoClose: 3000,
+          });
+          window.location.href = "/dashboard/manageblog";
         } else {
           alert("Error: " + data.message);
         }
@@ -150,7 +141,7 @@ const EditBlog = () => {
         console.error("Error updating blog:", error);
         alert("An error occurred while updating the blog.");
       } finally {
-        setIsSubmitting(false); // Hide spinner on submit button
+        setIsSubmitting(false);
       }
     };
 
@@ -158,7 +149,30 @@ const EditBlog = () => {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <svg
+          className="animate-spin h-10 w-10 text-indigo-600"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C3.58 0 0 3.58 0 8h4z"
+          ></path>
+        </svg>
+      </div>
+    );
   }
 
   return (
@@ -176,7 +190,7 @@ const EditBlog = () => {
             required
           />
         </div>
-        
+
         <div className="flex flex-col md:flex-row justify-between items-start">
           <div className="md:w-2/3 w-full">
             <p className="font-semibold text-xl mb-5">Content Section</p>
@@ -194,18 +208,38 @@ const EditBlog = () => {
                 accept="image/*"
                 multiple
               />
-              <div className="space-y-4">
-                <label className="font-semibold">Status:</label>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full inline-block bg-gray-100 focus:outline-none px-5 py-3"
-                  required
-                >
-                  <option value="draft">Draft</option>
-                  <option value="published">Published</option>
-                </select>
+              <div className="mt-4 flex flex-wrap gap-4">
+                {image_file.length > 0 && image_file.map((file, index) => (
+                  <div key={index} className="w-20 h-20 relative">
+                    <img
+                      src={URL.createObjectURL(file)} 
+                      alt={`Preview ${index}`}
+                      className="w-full h-full object-cover rounded-md"
+                    />
+                  </div>
+                ))}
+                {article?.images?.map((image, index) => (
+                  <div key={index} className="w-20 h-20 relative">
+                    <img
+                      src={image} 
+                      alt={`Existing Image ${index}`}
+                      className="w-full h-full object-cover rounded-md"
+                    />
+                  </div>
+                ))}
               </div>
+            </div>
+            <div>
+              <label className="font-semibold">Status:</label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-full inline-block bg-gray-100 focus:outline-none px-5 py-3"
+                required
+              >
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+              </select>
             </div>
           </div>
         </div>
@@ -243,6 +277,8 @@ const EditBlog = () => {
           )}
         </button>
       </form>
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

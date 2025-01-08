@@ -30,7 +30,7 @@ const TopStory = () => {
       }
 
       const data = await response.json();
-      console.log("Fetched data:", data);
+      // console.log("Fetched data:", data);
 
       if (data && data.data && Array.isArray(data.data)) {
         // Sort articles by 'createdAt' field in descending order (most recent first)
